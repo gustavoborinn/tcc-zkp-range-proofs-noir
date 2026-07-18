@@ -131,3 +131,23 @@ Format: `## YYYY-MM-DD · <spec or scope> — <title>` with **Observation / Evid
 **Decision:** Pilot labeled `pilot`; official sessions on a quiet machine. The 15% failure-rate rule was armed but never triggered at these circuit sizes.
 
 **Thesis implication:** Early evidence for Axis A's H1 (stochastic dominance of native) across all bit-widths, with a stable multiplicative penalty rather than pathological degradation — these circuits sit far below the wasm32 memory/gate ceilings, and that should frame the discussion of when browser proving is viable.
+
+## 2026-07-18 · review — Timed-region asymmetry between environments is conservative for Axis A
+
+**Observation:** The native harness times a fresh `bb prove` process per cycle (artifact/witness/vk loading included; process startup itself measured at ~0 ms), while the WASM harness times `generateProof` in a warm runtime with witnesses pre-fetched. The timed regions are therefore not perfectly symmetric.
+
+**Evidence:** Harness designs (`benchmarks/native/run_benchmark.py` vs `benchmarks/wasm/harness.js`); `bb --version` timing floor ≈ 0 ms.
+
+**Decision:** Kept as designed — each environment is measured the way it is actually used (CLI invocation vs. resident browser runtime), which is the methodology's ecological-validity stance. The asymmetry is documented instead of "corrected".
+
+**Thesis implication:** The bias direction is conservative: per-cycle loading inflates native times, so the observed ~2.3–2.8x native advantage is a lower bound on the pure proving-engine gap. This must be stated alongside the Axis A results; it strengthens, not weakens, a native-dominance conclusion.
+
+## 2026-07-18 · review — Brunner-Munzel degenerates under complete separation (pilot evidence)
+
+**Observation:** Running Brunner-Munzel on the pilot sessions: every native-vs-WASM comparison and the native u32/u64-vs-field comparisons have completely separated samples (no overlap), making the BM variance estimate zero (division by zero; statistic undefined). Overlapping pairs behave normally (native u8 vs field: p ≈ 5.1e-11; native u32 vs u64: p ≈ 0.13, not significant).
+
+**Evidence:** scipy `brunnermunzel` runs over `results/native/session-20260718T025555Z.jsonl` and `results/wasm/session-20260718T133509Z.jsonl`.
+
+**Decision:** Spec 006 must implement an explicit saturation rule: when samples are completely separated, report the relative effect (exactly 0 or 1) with a documented exact bound (e.g., permutation-test p-value) instead of the asymptotic BM statistic. Requirement added to the spec before implementation.
+
+**Thesis implication:** This is a "data too clear" condition, not a flaw: several hypothesis tests will saturate, and the results chapter should lean on effect sizes and distribution plots for those pairs, reserving formal test statistics for genuinely overlapping comparisons (e.g., adjacent wide types).
