@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>WASM Proving Benchmark</title>
+  <style>
+    body { font-family: monospace; margin: 2rem; }
+    #log { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>WASM32 proving benchmark</h1>
+  <p>Protocol and session parameters come from the URL query string:
+    <code>?burnin=15&amp;samples=100&amp;seed=12345&amp;label=pilot</code>
+    (defaults: methodology values, fresh seed).</p>
+  <div id="status">loading…</div>
+  <div id="log"></div>
+  <script type="module" src="./harness.js"></script>
+</body>
+</html>
