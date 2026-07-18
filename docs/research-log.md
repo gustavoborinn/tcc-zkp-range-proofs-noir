@@ -83,3 +83,21 @@ Format: `## YYYY-MM-DD · <spec or scope> — <title>` with **Observation / Evid
 **Decision:** Split-verifier topology not needed; `optimizer_runs = 1` retained. The ~330-byte margin is documented as a fragility: any future bb verifier growth may cross the limit.
 
 **Thesis implication:** Directly answers the methodology's Fase 1 question: the generic UltraHonk verifier that historically exceeded EIP-170 (~33 KB) now fits after aggressive optimization — the deployment constraint is real but currently satisfiable without architectural workarounds. On-chain gas already exhibits the bit-width ordering that spec 005 will measure rigorously.
+
+## 2026-07-18 · spec 003 — Latency benchmarks fix the verifier target at `evm`
+
+**Observation:** bb proves against different transcripts per target: `evm` (keccak) vs. native default (poseidon2). The artifact whose latency matters for the thesis is the one the deployed Solidity verifier accepts.
+
+**Decision:** All proving-time measurements — native (spec 003) and WASM (spec 004) — use `-t evm`, closing the open decision from spec 002. Additional protocol decisions: witness generation happens outside the timed region (deterministic input preparation; proving itself is randomized per run, keeping cycles independent); the verification key is precomputed and passed via `-k` (bb otherwise recomputes it inside `bb prove`); the timed unit is the wall-clock of the `bb prove` subprocess via monotonic clock, including constant process startup — documented as an additive component shared by all conditions.
+
+**Thesis implication:** The environment comparison (Axis A) and bit-width comparison (Axis B) are internally consistent and match the deployment scenario. The startup caveat must accompany the native results; Brunner-Munzel, being rank-based, is unaffected by shared additive constants within a condition pair.
+
+## 2026-07-18 · spec 003 — Pilot session: the u8→u32 step function reappears in proving time
+
+**Observation:** Full-protocol pilot (K=15 burn-in, N=100 samples per condition, seeded block randomization, zero failures) on the development machine: median proving times field = 38.6 ms (IQR 36.7–40.4), u8 = 41.6 ms (39.6–44.0), u32 = 97.9 ms (93.8–101.6), u64 = 96.2 ms (93.7–98.8).
+
+**Evidence:** `results/native/session-20260718T025555Z.jsonl` (seed 2928077471, machine metadata in the session header); validated by `benchmarks/native/validate_session.py`.
+
+**Decision:** Session labeled `pilot`; official sessions for the thesis run on a quiet machine with the same harness. The dataset is committed as the first end-to-end exercise of the schema contract that spec 006 consumes.
+
+**Thesis implication:** Proving latency reproduces the backend-gate step function (u8→u32 jump ≈ 2.4x in time vs. 30x in gates; u32 ≈ u64 in both) — evidence that lookup-table activation, not bit-width per se, drives the cost. Also note u64 median slightly below u32: an early sign that Axis B differences between adjacent wide types may be statistically indistinguishable, exactly what Brunner-Munzel with Holm-Bonferroni will test.

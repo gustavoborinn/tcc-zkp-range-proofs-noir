@@ -1,7 +1,7 @@
 # Spec 003: Native Benchmark Harness
 
 **Branch:** `spec/003-native-benchmark-harness`
-**Status:** drafted
+**Status:** in review
 **Depends on:** 002
 
 ## Overview
