@@ -39,5 +39,5 @@ A spec is done when:
 | 002 | [proof-pipeline-and-verifier](002-proof-pipeline-and-verifier/spec.md) | done | 001 |
 | 003 | [native-benchmark-harness](003-native-benchmark-harness/spec.md) | done | 002 |
 | 004 | [wasm-benchmark-harness](004-wasm-benchmark-harness/spec.md) | done | 002 |
-| 005 | [evm-gas-instrumentation](005-evm-gas-instrumentation/spec.md) | in review | 002 |
-| 006 | [statistical-analysis](006-statistical-analysis/spec.md) | drafted | 003, 004, 005 |
+| 005 | [evm-gas-instrumentation](005-evm-gas-instrumentation/spec.md) | done | 002 |
+| 006 | [statistical-analysis](006-statistical-analysis/spec.md) | in review | 003, 004, 005 |
