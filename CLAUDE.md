@@ -40,7 +40,9 @@ Noir and Barretenberg evolve fast and break compatibility between versions. AI m
 
 ## Research log (mandatory)
 
-`docs/research-log.md` is the continuous, objective record of everything that will later justify design choices in the thesis text and defense. **Any PR that produces an empirical finding, a design decision with scientific implications, or a toolchain change must append a dated entry to the log in that same PR.** Entries follow the Observation / Evidence / Decision / Thesis implication format. Examples of loggable events: a compiler behavior that forced a design change, a metric that contradicts or refines an expectation from `docs/expected_results.md`, a version pairing, a failed approach worth explaining. If in doubt, log it — pruning is easier than reconstructing.
+`docs/research-log.md` is the continuous, objective record of everything that will later justify design choices in the thesis text and defense.
+
+**Read before working — no exceptions.** At the start of every session, before writing any code, document, or plan, read `docs/research-log.md` in full (and the GitHub issue being worked, if any). The log is the accumulated context of the project: settled decisions, empirical findings, and validity caveats. Work that ignores it risks re-deriving or contradicting something already decided with evidence. If a task would conflict with a logged decision, stop and raise the conflict instead of proceeding. **Any PR that produces an empirical finding, a design decision with scientific implications, or a toolchain change must append a dated entry to the log in that same PR.** Entries follow the Observation / Evidence / Decision / Thesis implication format. Examples of loggable events: a compiler behavior that forced a design change, a metric that contradicts or refines an expectation from `docs/expected_results.md`, a version pairing, a failed approach worth explaining. If in doubt, log it — pruning is easier than reconstructing.
 
 ## Spec-driven workflow
 
