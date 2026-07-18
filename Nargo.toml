@@ -1,2 +1,4 @@
 [workspace]
-members = []
+members = [
+    "circuits/range_proof_field",
+]
