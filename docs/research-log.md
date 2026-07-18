@@ -181,3 +181,13 @@ Format: `## YYYY-MM-DD · <spec or scope> — <title>` with **Observation / Evid
 **Decision:** Saturated pairs are reported via the FR-3b rule (exact relative effect + permutation bound, marked "sat."), never via the undefined asymptotic statistic. The failure gate uses integer arithmetic — the 15% boundary (n = 85) is included, per the methodology's "more than 15%" wording; a float comparison misclassified the boundary during testing and was fixed.
 
 **Thesis implication:** With pilot data, both alternative hypotheses of section 3.2 are supported, and the results chapter can already be drafted around: (1) uniform ~2.3–2.8x WASM penalty with dominance saturation; (2) bit-width cost as a step function whose interesting contrast is u8-vs-u32, not u32-vs-u64; (3) tests saturating because effects dwarf the noise — effect sizes and ECDF/violin plots carry the narrative where formal statistics degenerate. Official (non-pilot) sessions only need to replace the input files; the pipeline re-derives everything.
+
+## 2026-07-18 · official collection — Dedicated sessions replicate the pilots
+
+**Observation:** Official sessions (label `official`, dedicated run: AC power, no heavy concurrent load) replicate the pilot results within 1–4% on every median. Native: field 38.6 / u8 41.0 / u32 98.5 / u64 97.3 ms; WASM (Chrome 150): 104.5 / 117.9 / 237.5 / 234.3 ms; slowdowns 2.41–2.88x. Zero failures in 920 recorded cycles across both environments. All hypothesis-test conclusions unchanged: Axis A saturated dominance in all conditions; Axis B rejects H0 for every variant vs. Field under Holm-Bonferroni in both environments; supplementary u32-vs-u64 (native) remains non-significant (p = 0.053).
+
+**Evidence:** `results/native/session-20260718T171730Z.jsonl` (seed 753410584), `results/wasm/session-20260718T171941Z.jsonl` (seed 3449093065); `results/analysis/report.md` regenerated from these inputs.
+
+**Decision:** The `official` sessions are the datasets of record for the thesis; the `pilot` sessions remain committed as provenance and as evidence of result stability under background load.
+
+**Thesis implication:** Pilot-vs-official agreement is itself reportable: the effects under study dwarf machine-load noise, supporting the robustness claims of the methodology (rank-based tests, block randomization). The u32-vs-u64 contrast sits at the significance boundary (p ≈ 0.05) in both collections — honest material for the discussion of when bit-width stops mattering.

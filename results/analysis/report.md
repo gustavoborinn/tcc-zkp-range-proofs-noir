@@ -2,8 +2,8 @@
 
 ## Input inventory
 
-- `results/native/session-20260718T025555Z.jsonl` — environment **native**, label `pilot`, seed 2928077471, git `8a44bb26`
-- `results/wasm/session-20260718T133509Z.jsonl` — environment **wasm**, label `pilot`, seed 871938275, git `d29639e7`
+- `results/native/session-20260718T171730Z.jsonl` — environment **native**, label `official`, seed 753410584, git `674e60f7`
+- `results/wasm/session-20260718T171941Z.jsonl` — environment **wasm**, label `official`, seed 3449093065, git `674e60f7`
 - `results/circuit-metrics.json`
 - `results/proof-metrics.json`
 - `results/gas/gas-metrics.json`
@@ -27,10 +27,10 @@ Significance level: alpha = 0.05 (two-tailed). Saturated pairs (complete separat
 
 | condition | native median [IQR] (ms) | wasm median [IQR] (ms) | slowdown | p_hat P(nat<wasm) | p-value |
 |---|---|---|---|---|---|
-| Field | 38.6 [36.7, 40.5] | 102.8 [100.3, 105.0] | 2.66x | 1.00 | <= 2.21e-59 (sat.) |
-| u8 | 41.6 [39.6, 44.3] | 116.1 [114.2, 118.6] | 2.79x | 1.00 | <= 2.21e-59 (sat.) |
-| u32 | 97.9 [94.1, 101.7] | 227.7 [223.1, 232.6] | 2.33x | 1.00 | <= 2.21e-59 (sat.) |
-| u64 | 96.2 [93.9, 98.8] | 225.8 [220.7, 231.9] | 2.35x | 1.00 | <= 2.21e-59 (sat.) |
+| Field | 38.6 [36.9, 41.2] | 104.5 [103.0, 106.8] | 2.71x | 1.00 | <= 2.21e-59 (sat.) |
+| u8 | 41.0 [39.4, 43.6] | 117.9 [115.1, 120.8] | 2.88x | 1.00 | <= 2.21e-59 (sat.) |
+| u32 | 98.5 [96.0, 102.1] | 237.5 [233.0, 242.4] | 2.41x | 1.00 | <= 2.21e-59 (sat.) |
+| u64 | 97.3 [94.6, 100.9] | 234.3 [229.8, 238.7] | 2.41x | 1.00 | <= 2.21e-59 (sat.) |
 
 ## Axis B — bit-width vs. Field baseline (Holm-Bonferroni)
 
@@ -38,7 +38,7 @@ Significance level: alpha = 0.05 (two-tailed). Saturated pairs (complete separat
 
 | comparison | p_hat P(var<Field) | p-value | Holm threshold | decision |
 |---|---|---|---|---|
-| u8-vs-Field | 0.25 | 5.06e-11 | 0.0500 | reject H0 |
+| u8-vs-Field | 0.28 | 1.06e-08 | 0.0500 | reject H0 |
 | u32-vs-Field | 0.00 | <= 2.21e-59 (sat.) | 0.0167 | reject H0 |
 | u64-vs-Field | 0.00 | <= 2.21e-59 (sat.) | 0.0250 | reject H0 |
 
@@ -46,11 +46,11 @@ Significance level: alpha = 0.05 (two-tailed). Saturated pairs (complete separat
 
 | comparison | p_hat P(var<Field) | p-value | Holm threshold | decision |
 |---|---|---|---|---|
-| u8-vs-Field | 0.01 | 4.51e-113 | 0.0167 | reject H0 |
+| u8-vs-Field | 0.02 | 2.60e-72 | 0.0167 | reject H0 |
 | u32-vs-Field | 0.00 | <= 2.21e-59 (sat.) | 0.0250 | reject H0 |
 | u64-vs-Field | 0.00 | <= 2.21e-59 (sat.) | 0.0500 | reject H0 |
 
-Supplementary (no family correction): u32 vs u64, native: p_hat = 0.44, p = 1.30e-01.
+Supplementary (no family correction): u32 vs u64, native: p_hat = 0.42, p = 5.33e-02.
 
 ## Deterministic metrics (exact comparison — no hypothesis testing)
 
