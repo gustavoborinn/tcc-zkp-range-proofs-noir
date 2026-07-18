@@ -1,0 +1,85 @@
+{
+  "chain_id": 11155111,
+  "fork_block": 11300032,
+  "rpc_source": "sepolia (public endpoint, fork only affects state, not results)",
+  "compilation_profile": {
+    "optimizer_runs": 1,
+    "reason": "EIP-170 fit (spec 002)"
+  },
+  "determinism": "each gasUsed identical across 2 runs (hard-checked)",
+  "eip7623": {
+    "standard_token_cost": 4,
+    "floor_per_token": 10,
+    "tx_base": 21000
+  },
+  "variants": [
+    {
+      "variant": "range_proof_field",
+      "verifier_address": "0x16bba9783b0eb15f7618436b37bea8aa73263ea4",
+      "gas_used": 1935854,
+      "tx_base_cost": 21000,
+      "calldata_bytes": 5124,
+      "tokens_in_calldata": 19116,
+      "calldata_standard_cost": 76464,
+      "calldata_floor_cost": 191160,
+      "pure_execution_gas": 1838390,
+      "blob": {
+        "payload_bytes": 4992,
+        "blob_size_bytes": 131072,
+        "blob_fraction": 0.0380859375,
+        "fractional_blob_gas": 4992
+      }
+    },
+    {
+      "variant": "range_proof_u8",
+      "verifier_address": "0x1632d635a386647faeeb0d8376c371bbc417caa3",
+      "gas_used": 2003352,
+      "tx_base_cost": 21000,
+      "calldata_bytes": 5508,
+      "tokens_in_calldata": 20667,
+      "calldata_standard_cost": 82668,
+      "calldata_floor_cost": 206670,
+      "pure_execution_gas": 1899684,
+      "blob": {
+        "payload_bytes": 5376,
+        "blob_size_bytes": 131072,
+        "blob_fraction": 0.041015625,
+        "fractional_blob_gas": 5376
+      }
+    },
+    {
+      "variant": "range_proof_u32",
+      "verifier_address": "0xd1fabab961625d790342859f77886f77243fb372",
+      "gas_used": 2340916,
+      "tx_base_cost": 21000,
+      "calldata_bytes": 7428,
+      "tokens_in_calldata": 28302,
+      "calldata_standard_cost": 113208,
+      "calldata_floor_cost": 283020,
+      "pure_execution_gas": 2206708,
+      "blob": {
+        "payload_bytes": 7296,
+        "blob_size_bytes": 131072,
+        "blob_fraction": 0.0556640625,
+        "fractional_blob_gas": 7296
+      }
+    },
+    {
+      "variant": "range_proof_u64",
+      "verifier_address": "0xb83fc34b93efa25b863e674a99f0c0a3cbc0aa02",
+      "gas_used": 2340880,
+      "tx_base_cost": 21000,
+      "calldata_bytes": 7428,
+      "tokens_in_calldata": 28293,
+      "calldata_standard_cost": 113172,
+      "calldata_floor_cost": 282930,
+      "pure_execution_gas": 2206708,
+      "blob": {
+        "payload_bytes": 7296,
+        "blob_size_bytes": 131072,
+        "blob_fraction": 0.0556640625,
+        "fractional_blob_gas": 7296
+      }
+    }
+  ]
+}

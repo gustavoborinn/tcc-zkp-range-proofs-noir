@@ -1,7 +1,7 @@
 # Spec 005: EVM Gas Instrumentation
 
 **Branch:** `spec/005-evm-gas-instrumentation`
-**Status:** drafted
+**Status:** in review
 **Depends on:** 002
 
 ## Overview
@@ -22,6 +22,7 @@ Instrument the deterministic on-chain cost metrics of proof verification for eac
 - FR-3: Calldata gas computation for each proof artifact under EIP-7623 rules (implemented from the EIP text, with the formula documented and unit-tested against hand-computed examples).
 - FR-4: Fractional blob-gas projection per proof: proof bytes / 128 KB blob capacity × blob cost, with the pricing assumptions documented.
 - FR-5: All results written to a committed machine-readable file under `results/gas/` keyed by variant and fork block number.
+- FR-6 (validity-review requirement): receipt `gasUsed` conflates the 21,000 base cost and the calldata token cost with EVM execution (EIP-7623 formula). The instrumentation must decompose it — `pure_execution_gas = gasUsed - 21000 - STANDARD_TOKEN_COST * tokens_in_calldata` — and assert that the EIP-7623 floor branch does not bind for verification transactions (execution-heavy), so the Execution Gas and Calldata Gas metrics are reported without double counting.
 
 ## Out of scope
 
