@@ -1,7 +1,7 @@
 # Plan: Spec 003 — Native Benchmark Harness
 
 **Spec:** [spec.md](spec.md)
-**Status:** draft
+**Status:** approved
 
 ## Technical approach
 
