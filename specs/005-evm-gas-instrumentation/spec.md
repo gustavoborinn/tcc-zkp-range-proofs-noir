@@ -1,7 +1,7 @@
 # Spec 005: EVM Gas Instrumentation
 
 **Branch:** `spec/005-evm-gas-instrumentation`
-**Status:** drafted
+**Status:** in review
 **Depends on:** 002
 
 ## Overview

@@ -151,3 +151,23 @@ Format: `## YYYY-MM-DD · <spec or scope> — <title>` with **Observation / Evid
 **Decision:** Spec 006 must implement an explicit saturation rule: when samples are completely separated, report the relative effect (exactly 0 or 1) with a documented exact bound (e.g., permutation-test p-value) instead of the asymptotic BM statistic. Requirement added to the spec before implementation.
 
 **Thesis implication:** This is a "data too clear" condition, not a flaw: several hypothesis tests will saturate, and the results chapter should lean on effect sizes and distribution plots for those pairs, reserving formal test statistics for genuinely overlapping comparisons (e.g., adjacent wide types).
+
+## 2026-07-18 · spec 005 — Gas decomposition reveals identical execution cost for u32 and u64
+
+**Observation:** On the Sepolia fork (block 11,300,032), receipt `gasUsed` per verification: field 1,935,854; u8 2,003,352; u32 2,340,916; u64 2,340,880 — each identical across two runs (hard-checked). Decomposing via EIP-7623 (`pure_execution = gasUsed - 21000 - 4·tokens`): u32 and u64 have **exactly equal** execution gas (2,206,708); their 36-gas receipt difference is entirely calldata (zero-byte composition of the proof bytes). Field/u8/u32 execution: 1,838,390 / 1,899,684 / 2,206,708.
+
+**Evidence:** `results/gas/gas-metrics.json`; `benchmarks/gas/eip_costs.py` unit-tested against hand-computed vectors, including the floor-boundary case where the receipt does not uniquely reveal execution gas (decomposition refuses).
+
+**Decision:** Execution Gas is always reported decomposed, never as raw `gasUsed` (validity-review requirement FR-6). The EIP-7623 floor never binds for these execution-heavy transactions (asserted per variant).
+
+**Thesis implication:** The deterministic-metric claim of the methodology is confirmed at receipt level, and the decomposition prevents a spurious u32-vs-u64 "difference" that a naive gasUsed comparison would report. On-chain verification cost mirrors the proof-size brackets (u32 = u64), not the bit-width — consistent with the succinctness narrative from spec 002.
+
+## 2026-07-18 · spec 005 — Blob projection: proofs occupy 3.8–5.6% of one blob
+
+**Observation:** Fractional EIP-4844 projection (payload = proof + public inputs, 1 blob-gas per byte at the 131,072-byte blob capacity): field 4,992; u8 5,376; u32/u64 7,296 blob-gas — i.e., 3.8–5.6% of a single blob per proof.
+
+**Evidence:** `results/gas/gas-metrics.json` (`blob` records).
+
+**Decision:** Reported in blob-gas units under the batching premise required by the methodology (payload rides a sequencer's blob; blob fee market pricing left symbolic).
+
+**Thesis implication:** A rollup batching ~18–26 such proofs fills one blob, making the data-publication cost per proof orders of magnitude below the calldata path (76–113k gas standard, 191–283k floor) — the economic argument the methodology's fractional metric was designed to expose. Calldata floor cost (EIP-7623) is 2.5x the standard cost for these payloads, worth noting as the post-Pectra penalty on calldata-heavy usage.
