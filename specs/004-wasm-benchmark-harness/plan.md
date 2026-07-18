@@ -1,7 +1,7 @@
 # Plan: Spec 004 — WASM Benchmark Harness
 
 **Spec:** [spec.md](spec.md)
-**Status:** draft
+**Status:** approved
 
 ## Technical approach
 
@@ -24,7 +24,7 @@ benchmarks/wasm/server.py             # static server with COOP/COEP headers + P
 benchmarks/wasm/index.html            # harness page (ES module importing the bb.js browser build)
 benchmarks/wasm/harness.js            # protocol runner: seeded PRNG (mulberry32) + Fisher-Yates
                                       # permutations, performance.now() timing, failure capture
-benchmarks/wasm/drive_session.py      # optional driver: launches real headful Chrome via
+benchmarks/wasm/drive_session.mjs      # optional driver (Node): builds with Vite, launches real headful Chrome via
                                       # Playwright, opens the page, waits for session completion
 results/wasm/session-<UTC>.jsonl      # committed session datasets (same schema as native)
 ```
@@ -36,7 +36,7 @@ Key mechanics:
 - **Timing:** `performance.now()` around each `generateProof(witness, { verifierTarget: 'evm' })` call.
 - **Failure protocol:** every rejection/exception is recorded (`ok: false`, error string) and the session continues; the 15% failure-rate rule (methodology Fase 2.3) is enforced at validation/analysis time, not by aborting collection.
 - **Session config** (seed, K, N, label) passed via URL query; the completed session is POSTed to the server, which writes `results/wasm/session-<UTC>.jsonl` — same header/cycle records as native plus `browser`, `cross_origin_isolated`, `hardware_concurrency`, `bbjs_version`.
-- **Automation:** `drive_session.py` launches installed real Chrome (Playwright, `channel="chrome"`, headful — headless would alter the V8 profile the methodology cares about), navigates with the session parameters, and exits when the page signals completion. Manual runs (open the URL in Chrome) remain fully supported; the driver only removes the clicking.
+- **Automation:** `drive_session.mjs` launches installed real Chrome (Playwright, `channel="chrome"`, headful — headless would alter the V8 profile the methodology cares about), navigates with the session parameters, and exits when the page signals completion. Manual runs (open the URL in Chrome) remain fully supported; the driver only removes the clicking.
 
 ## Stack and versions
 
