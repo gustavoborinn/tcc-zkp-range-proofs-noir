@@ -1,4 +1,7 @@
 [workspace]
 members = [
     "circuits/range_proof_field",
+    "circuits/range_proof_u8",
+    "circuits/range_proof_u32",
+    "circuits/range_proof_u64",
 ]
