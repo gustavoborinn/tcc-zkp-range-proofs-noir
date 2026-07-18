@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  noir:
+    name: Noir format and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install nargo
+        run: |
+          curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+          echo "$HOME/.nargo/bin" >> "$GITHUB_PATH"
+
+      - name: Pin nargo version
+        run: |
+          noirup --version 1.0.0-beta.20
+          nargo --version
+
+      - name: Check formatting
+        run: |
+          if ls circuits/*/Nargo.toml >/dev/null 2>&1; then
+            nargo fmt --check
+          else
+            echo "No circuit packages yet; skipping fmt."
+          fi
+
+      - name: Run circuit tests
+        run: |
+          if ls circuits/*/Nargo.toml >/dev/null 2>&1; then
+            nargo test
+          else
+            echo "No circuit packages yet; skipping tests."
+          fi
