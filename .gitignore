@@ -31,3 +31,6 @@ results/**/raw/
 
 # Secrets
 .env
+
+# WASM harness build output
+benchmarks/wasm/dist/

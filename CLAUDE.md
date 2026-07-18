@@ -18,8 +18,8 @@ Reproducibility requires strict version pinning. Update the "Installed" column w
 | Barretenberg CLI (`bb`) | version compatible with installed `nargo` | 5.0.0-nightly.20260324 (resolved by `bbup` from nargo 1.0.0-beta.20) |
 | Proving scheme | UltraHonk | — |
 | Foundry (`forge`/`anvil`) | recent stable | 1.1.0-stable |
-| Browser (WASM axis) | Chrome >= 133 | to be recorded in spec 004 |
-| `@aztec/bb.js` | version matching `bb` | to be recorded in spec 004 |
+| Browser (WASM axis) | Chrome >= 133 | Chrome 150.0.7871.128 (headful via Playwright for unattended sessions) |
+| `@aztec/bb.js` | version matching `bb` | 5.0.0-nightly.20260324 (exact pairing, no semver range) |
 | Python (analysis) | 3.10+ with scipy | 3.12.3 |
 | Node.js | 18+ | 24.14.1 |
 

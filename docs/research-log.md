@@ -101,3 +101,33 @@ Format: `## YYYY-MM-DD · <spec or scope> — <title>` with **Observation / Evid
 **Decision:** Session labeled `pilot`; official sessions for the thesis run on a quiet machine with the same harness. The dataset is committed as the first end-to-end exercise of the schema contract that spec 006 consumes.
 
 **Thesis implication:** Proving latency reproduces the backend-gate step function (u8→u32 jump ≈ 2.4x in time vs. 30x in gates; u32 ≈ u64 in both) — evidence that lookup-table activation, not bit-width per se, drives the cost. Also note u64 median slightly below u32: an early sign that Axis B differences between adjacent wide types may be statistically indistinguishable, exactly what Brunner-Munzel with Holm-Bonferroni will test.
+
+## 2026-07-18 · spec 004 — bb.js pairs exactly with native bb; browser proofs are pipeline-coherent
+
+**Observation:** `@aztec/bb.js@5.0.0-nightly.20260324` exists on npm with the same version string as the native `bb`, and its API accepts `verifierTarget: 'evm'`. `Barretenberg.new({ backend: BackendType.WasmWorker })` must be forced: bb.js silently prefers the native binary when one is on PATH, which would corrupt the environment axis. Proofs generated in WASM (Node and real Chrome) are byte-compatible (7,232 B for u64) and verify against the native vk via `bb verify -t evm`.
+
+**Evidence:** npm registry; installed type declarations; cross-verification runs (Node probe and the browser session's persisted proof, both exit 0).
+
+**Decision:** Exact-version pairing enforced in `benchmarks/wasm/package.json` (no semver range). Every WASM session persists one measured proof so pipeline coherence is replayable from committed data.
+
+**Thesis implication:** The environment comparison is apples-to-apples: same circuit, same witness, same proof format, same verifier — only the execution engine changes. This is the strongest possible internal validity for Axis A.
+
+## 2026-07-18 · spec 004 — The bb.js browser build requires a bundler; the WASM binary ships inline
+
+**Observation:** The bb.js browser build is unbundled ESM with bare specifiers (`pako`, `comlink`, `msgpackr`, `idb-keyval`) and module workers created via `new Worker(new URL(...), { type: 'module' })` — a plain `<script type="module">` cannot load it. The 3.5 MB WASM binary is embedded as a base64 data URL inside the module, so no external network fetch occurs (compatible with strict COEP).
+
+**Evidence:** failed direct-import dry run (page hung with module resolution errors); `dest/browser/barretenberg_wasm/fetch_code/browser/` sources; successful Vite build emitting the workers as chunks.
+
+**Decision:** Vite (`vite build`, `worker.format: 'es'`, static `dist/` output) bundles the harness; our COOP/COEP Python server serves the built page, keeping measurement serving free of dev-server transformations.
+
+**Thesis implication:** Worth one paragraph on WASM deployment engineering: browser proving requires nontrivial toolchain support (bundler, cross-origin isolation, worker plumbing) that native proving does not — a qualitative cost of the WASM32 path beyond latency.
+
+## 2026-07-18 · spec 004 — WASM pilot: uniform ~2.3–2.8x slowdown, same step function, zero failures
+
+**Observation:** Full-protocol pilot in real Chrome 150 (headful, crossOriginIsolated, 12 threads, seed 871938275, zero failures): medians field = 102.8 ms, u8 = 116.1 ms, u32 = 227.7 ms, u64 = 225.8 ms. Against the native pilot: slowdown factors ≈ 2.7x, 2.8x, 2.3x, 2.3x. The u8→u32 step function reproduces in WASM; dispersion is modest (IQR widths ≈ 5–12 ms), with the expected long tail (u64 max 287 ms).
+
+**Evidence:** `results/wasm/session-20260718T133509Z.jsonl`; native baseline `results/native/session-20260718T025555Z.jsonl`.
+
+**Decision:** Pilot labeled `pilot`; official sessions on a quiet machine. The 15% failure-rate rule was armed but never triggered at these circuit sizes.
+
+**Thesis implication:** Early evidence for Axis A's H1 (stochastic dominance of native) across all bit-widths, with a stable multiplicative penalty rather than pathological degradation — these circuits sit far below the wasm32 memory/gate ceilings, and that should frame the discussion of when browser proving is viable.
