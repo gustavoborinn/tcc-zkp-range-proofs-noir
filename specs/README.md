@@ -34,8 +34,8 @@ A spec is done when:
 
 | # | Spec | Status | Depends on |
 |---|------|--------|------------|
-| 000 | project-foundation (this structure) | in progress | — |
-| 001 | [range-proof-circuits](001-range-proof-circuits/spec.md) | drafted | — |
+| 000 | project-foundation (this structure) | done | — |
+| 001 | [range-proof-circuits](001-range-proof-circuits/spec.md) | in review | — |
 | 002 | [proof-pipeline-and-verifier](002-proof-pipeline-and-verifier/spec.md) | drafted | 001 |
 | 003 | [native-benchmark-harness](003-native-benchmark-harness/spec.md) | drafted | 002 |
 | 004 | [wasm-benchmark-harness](004-wasm-benchmark-harness/spec.md) | drafted | 002 |

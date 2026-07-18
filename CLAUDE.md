@@ -15,7 +15,7 @@ Reproducibility requires strict version pinning. Update the "Installed" column w
 | Tool | Required | Installed (this machine) |
 |------|----------|--------------------------|
 | Noir CLI (`nargo`) | >= 0.38.0 | 1.0.0-beta.20 |
-| Barretenberg CLI (`bb`) | version compatible with installed `nargo` | **not installed — install via `bbup` before spec 002** |
+| Barretenberg CLI (`bb`) | version compatible with installed `nargo` | 5.0.0-nightly.20260324 (resolved by `bbup` from nargo 1.0.0-beta.20) |
 | Proving scheme | UltraHonk | — |
 | Foundry (`forge`/`anvil`) | recent stable | 1.1.0-stable |
 | Browser (WASM axis) | Chrome >= 133 | to be recorded in spec 004 |
@@ -37,6 +37,10 @@ Noir and Barretenberg evolve fast and break compatibility between versions. AI m
    - `Prover.toml` input encoding is type-sensitive; integers are written as strings.
    - UltraHonk uses lookup tables for range constraints; gate counts from `bb gates` (backend reality) differ from ACIR opcode counts from `nargo info` (abstract complexity). The methodology requires both.
 5. **Soundness before performance.** Every circuit variant ships with negative tests (out-of-range inputs must fail to prove) and they must pass **before** the variant is used in any benchmark. This is Fase 3 of the methodology and it is non-negotiable.
+
+## Research log (mandatory)
+
+`docs/research-log.md` is the continuous, objective record of everything that will later justify design choices in the thesis text and defense. **Any PR that produces an empirical finding, a design decision with scientific implications, or a toolchain change must append a dated entry to the log in that same PR.** Entries follow the Observation / Evidence / Decision / Thesis implication format. Examples of loggable events: a compiler behavior that forced a design change, a metric that contradicts or refines an expectation from `docs/expected_results.md`, a version pairing, a failed approach worth explaining. If in doubt, log it — pruning is easier than reconstructing.
 
 ## Spec-driven workflow
 

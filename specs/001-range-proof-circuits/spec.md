@@ -1,7 +1,7 @@
 # Spec 001: Range Proof Circuits
 
 **Branch:** `spec/001-range-proof-circuits`
-**Status:** drafted
+**Status:** in review
 **Depends on:** none
 
 ## Overview

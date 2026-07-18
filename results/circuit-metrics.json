@@ -1,0 +1,26 @@
+{
+  "nargo_version": "1.0.0-beta.20",
+  "backend_gates_status": "pending: bb not installed",
+  "circuits": [
+    {
+      "variant": "range_proof_field",
+      "acir_opcodes": 5,
+      "backend_gates": null
+    },
+    {
+      "variant": "range_proof_u8",
+      "acir_opcodes": 11,
+      "backend_gates": null
+    },
+    {
+      "variant": "range_proof_u32",
+      "acir_opcodes": 11,
+      "backend_gates": null
+    },
+    {
+      "variant": "range_proof_u64",
+      "acir_opcodes": 11,
+      "backend_gates": null
+    }
+  ]
+}
