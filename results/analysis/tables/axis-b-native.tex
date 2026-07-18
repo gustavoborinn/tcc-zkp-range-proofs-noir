@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+\centering
+\caption{Axis B (native): bit-width cost vs. Field baseline}
+\label{tab:axis-b-native}
+\begin{tabular}{lllll}
+\toprule
+comparison & p_hat P(var<Field) & p-value & Holm threshold & decision \\
+\midrule
+u8-vs-Field & 0.25 & 5.06e-11 & 0.0500 & reject H0 \\
+u32-vs-Field & 0.00 & <= 2.21e-59 (sat.) & 0.0167 & reject H0 \\
+u64-vs-Field & 0.00 & <= 2.21e-59 (sat.) & 0.0250 & reject H0 \\
+\bottomrule
+\end{tabular}
+\end{table}

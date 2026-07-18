@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{Deterministic metrics per circuit variant}
+\label{tab:deterministic}
+\begin{tabular}{llllllll}
+\toprule
+variant & ACIR opcodes & backend gates & proof (B) & exec gas & calldata std & calldata floor & blob gas \\
+\midrule
+Field & 5 & 40 & 4928 & 1838390 & 76464 & 191160 & 4992 \\
+u8 & 11 & 93 & 5312 & 1899684 & 82668 & 206670 & 5376 \\
+u32 & 11 & 2791 & 7232 & 2206708 & 113208 & 283020 & 7296 \\
+u64 & 11 & 2838 & 7232 & 2206708 & 113172 & 282930 & 7296 \\
+\bottomrule
+\end{tabular}
+\end{table}

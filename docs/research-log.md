@@ -171,3 +171,13 @@ Format: `## YYYY-MM-DD · <spec or scope> — <title>` with **Observation / Evid
 **Decision:** Reported in blob-gas units under the batching premise required by the methodology (payload rides a sequencer's blob; blob fee market pricing left symbolic).
 
 **Thesis implication:** A rollup batching ~18–26 such proofs fills one blob, making the data-publication cost per proof orders of magnitude below the calldata path (76–113k gas standard, 191–283k floor) — the economic argument the methodology's fractional metric was designed to expose. Calldata floor cost (EIP-7623) is 2.5x the standard cost for these payloads, worth noting as the post-Pectra penalty on calldata-heavy usage.
+
+## 2026-07-18 · spec 006 — Pilot hypothesis tests: both H1 axes supported; adjacent wide types indistinguishable
+
+**Observation:** Full pipeline over the pilot sessions (alpha = 0.05, two-tailed): **Axis A** — native stochastically dominates WASM in all four conditions with complete separation (relative effect P(native<wasm) = 1.00; exact permutation bound p <= 2.21e-59 per pair). **Axis B** — all three variants reject H0 against the Field baseline in both environments under Holm-Bonferroni (native u8-vs-Field is the only overlapping pair: p = 5.06e-11, p_hat = 0.25). Supplementary: u32 vs u64 (native) is not significant (p = 0.13, p_hat = 0.44) — adjacent wide types are statistically indistinguishable, matching their identical execution gas and near-identical backend gates.
+
+**Evidence:** `results/analysis/report.md` (input inventory lists session files, seeds, and git commits); unit-tested statistics module (`analysis/test_stats.py`, 13 tests: scipy reference values, Holm step-down cases, saturation rule, failure-gate boundary).
+
+**Decision:** Saturated pairs are reported via the FR-3b rule (exact relative effect + permutation bound, marked "sat."), never via the undefined asymptotic statistic. The failure gate uses integer arithmetic — the 15% boundary (n = 85) is included, per the methodology's "more than 15%" wording; a float comparison misclassified the boundary during testing and was fixed.
+
+**Thesis implication:** With pilot data, both alternative hypotheses of section 3.2 are supported, and the results chapter can already be drafted around: (1) uniform ~2.3–2.8x WASM penalty with dominance saturation; (2) bit-width cost as a step function whose interesting contrast is u8-vs-u32, not u32-vs-u64; (3) tests saturating because effects dwarf the noise — effect sizes and ECDF/violin plots carry the narrative where formal statistics degenerate. Official (non-pilot) sessions only need to replace the input files; the pipeline re-derives everything.

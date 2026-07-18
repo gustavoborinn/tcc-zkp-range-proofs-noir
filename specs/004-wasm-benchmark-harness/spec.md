@@ -1,7 +1,7 @@
 # Spec 004: WASM Benchmark Harness
 
 **Branch:** `spec/004-wasm-benchmark-harness`
-**Status:** in review
+**Status:** done
 **Depends on:** 002
 
 ## Overview

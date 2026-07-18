@@ -1,7 +1,7 @@
 # Spec 006: Statistical Analysis and Reporting
 
 **Branch:** `spec/006-statistical-analysis`
-**Status:** drafted
+**Status:** in review
 **Depends on:** 003, 004, 005
 
 ## Overview

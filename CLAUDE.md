@@ -94,3 +94,10 @@ forge test                       # verifier acceptance/rejection suite
 # Environment audit
 scripts/check-env.sh        # verify all pinned tool versions
 ```
+
+```bash
+# Statistical analysis (spec 006; venv with pinned deps)
+python3 -m venv analysis/.venv && analysis/.venv/bin/pip install -r analysis/requirements.txt
+cd analysis && .venv/bin/python -m unittest      # stats module tests
+cd analysis && .venv/bin/python run_analysis.py  # sessions -> results/analysis/{report.md,figures,tables}
+```
