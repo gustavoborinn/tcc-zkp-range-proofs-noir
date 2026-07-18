@@ -1,0 +1,36 @@
+{
+  "nargo_version": "1.0.0-beta.20",
+  "bb_version": "5.0.0-nightly.20260324",
+  "verifier_target": "evm",
+  "canonical_inputs": {
+    "v": 50,
+    "a": 10,
+    "b": 100
+  },
+  "proofs": [
+    {
+      "variant": "range_proof_field",
+      "proof_bytes": 4928,
+      "vk_bytes": 1888,
+      "public_inputs_bytes": 64
+    },
+    {
+      "variant": "range_proof_u8",
+      "proof_bytes": 5312,
+      "vk_bytes": 1888,
+      "public_inputs_bytes": 64
+    },
+    {
+      "variant": "range_proof_u32",
+      "proof_bytes": 7232,
+      "vk_bytes": 1888,
+      "public_inputs_bytes": 64
+    },
+    {
+      "variant": "range_proof_u64",
+      "proof_bytes": 7232,
+      "vk_bytes": 1888,
+      "public_inputs_bytes": 64
+    }
+  ]
+}

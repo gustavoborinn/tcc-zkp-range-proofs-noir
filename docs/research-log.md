@@ -43,3 +43,43 @@ Format: `## YYYY-MM-DD · <spec or scope> — <title>` with **Observation / Evid
 **Decision:** `bb` version is always derived via `bbup`'s compatibility mapping, never picked manually; recorded in the `CLAUDE.md` stack table.
 
 **Thesis implication:** The methodology's stack-pinning requirement ("`bb` version corresponding to `nargo`", section 3.1) is operationalized by an auditable, tool-resolved pairing — worth one sentence in the methodology chapter on how compatibility was guaranteed.
+
+## 2026-07-17 · spec 002 — bb CLI requires an explicit EVM verifier target
+
+**Observation:** bb 5.0.0-nightly.20260324 selects hash function and ZK settings via `-t/--verifier_target`: `evm` (keccak + ZK) for Solidity verification vs. the native default (poseidon2). Older flag styles (`--scheme`, `--oracle_hash`) are deprecated aliases. `forge create` cannot deploy the generated verifier (dynamic library linking); `forge script` handles library deployment and linking automatically.
+
+**Evidence:** `bb prove --help-extended`; failed `forge create` run ("Dynamic linking not supported"); successful `forge script` broadcast.
+
+**Decision:** The EVM pipeline (`scripts/prove-all.sh`, `scripts/generate-verifiers.sh`, `scripts/deploy-fork.sh`) uses `-t evm` consistently; deployment goes through `contracts/script/Deploy.s.sol`.
+
+**Thesis implication:** Open methodological decision flagged for specs 003/004: proving-time benchmarks must fix one verifier target, and `-t evm` (keccak transcript) is the one that matches the deployed scenario. The choice and its rationale must be stated before latency collection begins.
+
+## 2026-07-17 · spec 002 — Backend gates differentiate bit-widths; ACIR does not
+
+**Observation:** Backend gate counts (`bb gates`, `circuit_size`): field = 40, u8 = 93, u32 = 2,791, u64 = 2,838 — while ACIR opcodes stay flat (11) for all integer variants. The dominant jump (~30x) sits between u8 and u32, not between u32 and u64.
+
+**Evidence:** `results/circuit-metrics.json` (collected, bb 5.0.0-nightly.20260324).
+
+**Decision:** Both layers are reported side by side; the u8→u32 threshold is treated as a first-class analysis subject (lookup-table machinery activation), not smoothed over.
+
+**Thesis implication:** Empirically validates the methodology's dual instrumentation (section 3.4, metric 4) and refines the expectation of `docs/expected_results.md`: cost growth is a step function driven by backend lookup structures, not a linear function of bit-width.
+
+## 2026-07-17 · spec 002 — Proof size grows stepwise; VK is constant
+
+**Observation:** UltraHonk proof sizes with `-t evm`: field = 4,928 B, u8 = 5,312 B, u32 = u64 = 7,232 B. Verification key fixed at 1,888 B and public inputs at 64 B (two 32-byte words) across all variants.
+
+**Evidence:** `results/proof-metrics.json`; artifacts in `results/proofs/`.
+
+**Decision:** Canonical inputs (`v=50, a=10, b=100`) fixed across variants so artifacts stay structurally comparable.
+
+**Thesis implication:** Consistent with succinct-proof expectations (`docs/expected_results.md`): proving cost can rise with bit-width while the artifact stays compact; the u32/u64 tie suggests size tracks circuit-size brackets (log growth), a point for the results chapter.
+
+## 2026-07-17 · spec 002 — Verifiers fit EIP-170 with ~330 bytes of margin
+
+**Observation:** With `optimizer_runs = 1`, every generated verifier compiles to 24,243–24,246 bytes of runtime bytecode — under the EIP-170 limit (24,576) by only ~330 bytes. All four deployed successfully to an anvil fork of Sepolia (chain id 11155111, block 11,295,933); valid proofs accepted on-chain (receipt `gasUsed`: field 1,935,854; u8 2,003,352; u32 2,340,916; u64 2,340,880), corrupted proofs and wrong public inputs rejected.
+
+**Evidence:** `forge build --sizes`; `scripts/deploy-fork.sh` output; Foundry test suite (9/9).
+
+**Decision:** Split-verifier topology not needed; `optimizer_runs = 1` retained. The ~330-byte margin is documented as a fragility: any future bb verifier growth may cross the limit.
+
+**Thesis implication:** Directly answers the methodology's Fase 1 question: the generic UltraHonk verifier that historically exceeded EIP-170 (~33 KB) now fits after aggressive optimization — the deployment constraint is real but currently satisfiable without architectural workarounds. On-chain gas already exhibits the bit-width ordering that spec 005 will measure rigorously.

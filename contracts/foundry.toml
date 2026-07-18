@@ -1,0 +1,14 @@
+[profile.default]
+src = "src"
+out = "out"
+test = "test"
+script = "script"
+libs = ["../lib"]
+solc_version = "0.8.28"
+# EIP-170 tuning required by the methodology (Fase 1): optimize aggressively
+# for deployed bytecode size, not runtime gas.
+optimizer = true
+optimizer_runs = 1
+
+[rpc_endpoints]
+sepolia_fork = "http://127.0.0.1:8545"

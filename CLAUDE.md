@@ -72,15 +72,24 @@ nargo info                  # ACIR opcode counts (abstract complexity metric)
 nargo compile               # produce ACIR artifact in target/
 nargo fmt                   # format Noir code
 
-# Proving (spec 002+, requires bb)
-bb prove  -b target/<pkg>.json -w target/<pkg>.gz -o target/proof
-bb verify                   # local verification
+# Proving (verified syntax for bb 5.0.0-nightly.20260324; -t evm = keccak + ZK
+# for Solidity verification, required consistently across prove/verify/vk)
+nargo execute --package <pkg>    # witness from circuits/<pkg>/Prover.toml
+bb prove  -b target/<pkg>.json -w target/<pkg>.gz -o <dir> -t evm --write_vk
+bb verify -t evm -k <dir>/vk -p <dir>/proof -i <dir>/public_inputs
 bb gates  -b target/<pkg>.json   # backend gate count (real cryptographic weight)
-bb write_solidity_verifier  # generate the Solidity verifier contract
+bb write_solidity_verifier -k <dir>/vk -o Verifier.sol
 
-# EVM (spec 002/005)
-anvil --fork-url <sepolia-rpc>   # local Sepolia fork for gas instrumentation
-forge build && forge test        # Solidity toolchain
+# Pipelines
+scripts/collect-circuit-metrics.sh  # ACIR opcodes + backend gates -> results/circuit-metrics.json
+scripts/prove-all.sh                # prove + verify all variants -> results/proofs/, proof-metrics.json
+scripts/generate-verifiers.sh       # regenerate Solidity verifiers + test fixtures from vks
+scripts/deploy-fork.sh              # anvil Sepolia fork: deploy + on-chain smoke test
+
+# EVM (contracts/ is the Foundry root; deploy via forge script, not forge
+# create — the generated verifier needs dynamic library linking)
+forge build --sizes              # EIP-170 check (run inside contracts/)
+forge test                       # verifier acceptance/rejection suite
 
 # Environment audit
 scripts/check-env.sh        # verify all pinned tool versions
