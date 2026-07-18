@@ -1,7 +1,7 @@
 # Plan: Spec 002 — Proof Pipeline and Solidity Verifier
 
 **Spec:** [spec.md](spec.md)
-**Status:** draft
+**Status:** approved
 
 ## Technical approach
 

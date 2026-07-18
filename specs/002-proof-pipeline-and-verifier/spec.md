@@ -1,7 +1,7 @@
 # Spec 002: Proof Pipeline and Solidity Verifier
 
 **Branch:** `spec/002-proof-pipeline-and-verifier`
-**Status:** drafted
+**Status:** in review
 **Depends on:** 001
 
 ## Overview
