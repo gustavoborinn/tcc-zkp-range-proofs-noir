@@ -1,6 +1,2 @@
-[package]
-name = "tcc_zkp_range_proofs"
-type = "bin"
-authors = [""]
-
-[dependencies]
+[workspace]
+members = []
