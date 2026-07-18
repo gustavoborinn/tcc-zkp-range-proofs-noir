@@ -18,3 +18,4 @@
 - [ ] `nargo test` passes
 - [ ] Acceptance criteria of the spec are met and demonstrated above
 - [ ] Commits follow Conventional Commits (English, atomic)
+- [ ] `docs/research-log.md` updated if this PR produced findings, design decisions, or toolchain changes
