@@ -23,6 +23,7 @@ Implement the analysis pipeline that turns the collected samples into the thesis
 - FR-1: Python package under `analysis/` (pinned dependencies, e.g. scipy for `brunnermunzel`, numpy, pandas, matplotlib) with a reproducible entry point: raw results in, full report out.
 - FR-2: Loader validating the schema contract from specs 003/004 (shared loader), refusing malformed or incomplete sessions.
 - FR-3: Axis A and Axis B test implementations producing: test statistic, p-value, relative effect estimate, and Holm-Bonferroni adjusted decisions for Axis B.
+- FR-3b (validity-review requirement): an explicit saturation rule for completely separated samples, where the Brunner-Munzel variance estimate is zero and the statistic is undefined (already observed in the pilot data for every native-vs-WASM pair): report the relative effect (exactly 0 or 1) with an exact permutation-based p-value bound instead of the asymptotic statistic, and mark the pair as saturated in the output tables.
 - FR-4: Figures: violin plots and ECDFs per condition and environment; deterministic-metric tables (ACIR opcodes, backend gates, proof size, execution/calldata/blob gas) formatted for direct inclusion in the thesis (LaTeX-friendly output).
 - FR-5: A single generated report (Markdown) linking every number to its input data file and analysis version, for auditability.
 
