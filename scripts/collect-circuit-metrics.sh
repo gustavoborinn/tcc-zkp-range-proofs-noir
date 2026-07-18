@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Collects the deterministic circuit-complexity metrics required by
 # docs/methodology.md section 3.4 (metric 4): ACIR opcodes per variant via
-# `nargo info --json`. Backend gate counts (`bb gates`) are collected by the
-# spec 002 pipeline once bb is installed; until then this script records them
-# as pending so the gap is explicit rather than silent.
+# `nargo info --json` and backend gate counts via `bb gates`. Backend counts
+# degrade to an explicit pending marker when bb is absent, so the gap is
+# never silent.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -12,9 +12,12 @@ out="results/circuit-metrics.json"
 nargo_version=$(nargo --version | head -n 1 | sed 's/nargo version = //')
 info=$(nargo info --json)
 
+bb_version=null
 backend_status="pending: bb not installed"
 if command -v bb >/dev/null 2>&1; then
-  backend_status="pending: collection implemented in spec 002"
+  bb_version=$(bb --version 2>/dev/null | tail -n 1 | jq -R .)
+  backend_status="collected"
+  nargo compile >/dev/null
 fi
 
 records="[]"
@@ -27,12 +30,20 @@ for pkg in range_proof_field range_proof_u8 range_proof_u32 range_proof_u64; do
       "a zero-opcode circuit invalidates the experimental comparison" >&2
     exit 1
   fi
-  records=$(jq --arg v "$pkg" --argjson a "$acir" \
-    '. += [{variant: $v, acir_opcodes: $a, backend_gates: null}]' <<<"$records")
+  gates=null
+  if [ "$backend_status" = "collected" ]; then
+    gates=$(bb gates -b "target/$pkg.json" 2>/dev/null | jq '.functions[0].circuit_size')
+    if [ -z "$gates" ] || [ "$gates" = "null" ] || [ "$gates" -eq 0 ]; then
+      echo "error: bb gates returned no circuit_size for $pkg" >&2
+      exit 1
+    fi
+  fi
+  records=$(jq --arg v "$pkg" --argjson a "$acir" --argjson g "$gates" \
+    '. += [{variant: $v, acir_opcodes: $a, backend_gates: $g}]' <<<"$records")
 done
 
-jq -n --argjson r "$records" --arg nv "$nargo_version" --arg bs "$backend_status" \
-  '{nargo_version: $nv, backend_gates_status: $bs, circuits: $r}' > "$out"
+jq -n --argjson r "$records" --arg nv "$nargo_version" --argjson bv "$bb_version" --arg bs "$backend_status" \
+  '{nargo_version: $nv, bb_version: $bv, backend_gates_status: $bs, circuits: $r}' > "$out"
 
 echo "wrote $out"
 jq . "$out"
