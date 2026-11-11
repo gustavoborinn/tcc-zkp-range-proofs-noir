@@ -1,0 +1,11 @@
+{
+  "changed_frozen_files": [
+    "docs/final-statistical-method.md",
+    "specs/016-final-analysis/schedule.json"
+  ],
+  "validated_pairs": 10,
+  "adapter_tests": 8,
+  "exporter_tests": 5,
+  "no_collection": true,
+  "no_inference": true
+}

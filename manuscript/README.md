@@ -21,4 +21,4 @@ Esta branch é uma edição para leitura do orientador: fontes LaTeX, classe, ta
 - Apresentação das emendas de coleta, incluindo 29/10 e sementes repetidas em 03/11.
 - Organização dos resultados já disponíveis e da discussão parcial.
 
-A programação futura precisa ser reconciliada: com dez pares completos em 11/11, dez novas datas de 12 a 21/11 permitiriam atingir vinte, se não houver novas ausências ou falhas. Isso é projeção logística, não calendário congelado já alterado. Prazo informado pelo autor: envio em 24/11.
+O calendário foi reconciliado em 11/11: pares 11–20 previstos de 12 a 21/11, mantendo os dez pares reais anteriores e as sementes das entradas não executadas. O término depende de não haver novas ausências ou falhas. Prazo informado pelo autor: envio em 24/11.

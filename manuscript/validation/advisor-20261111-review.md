@@ -7,3 +7,5 @@ Revisados sete capítulos e quatro tabelas existentes. Compilação exit 0, 40 p
 Falha de conferência inicial: busca recursiva incluiu fontes de terceiros e exemplos fora da árvore do documento, gerando falsos positivos de citações; corrigida para capítulos efetivamente incluídos e references.tex. Nenhuma referência alterada por esse diagnóstico.
 
 Publicação delimitada em branch própria, a partir de main remota, sem alterar checkout de trabalho ou publicar dados brutos extensos. Material herdado de main é histórico; entrada de leitura explicita esse alcance.
+
+Revisão complementar de 11/11: calendário reconciliado (12–21/11), exceções distinguidas da regra geral; exportador com cinco testes e recusa confirmada do relatório real de dez pares. Compilação novamente aprovada; página física 22 inspecionada sem cortes. Checklist editorial/administrativo em docs/final-manuscript-checklist.md. Nenhuma inferência ou nova coleta.

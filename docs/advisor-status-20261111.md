@@ -8,7 +8,7 @@
 - Coleta de latência: dez pares completos em dias distintos; meta mantida em vinte.
 - Dez pares retidos: 18.400 sucessos (2.400 aquecimentos e 16.000 medidas), sem falhas nessas sessões completas. Tentativas interrompidas preservadas separadamente.
 - Pendentes: dez pares, análise final de latência, discussão correspondente, conclusão e resumos. Elementos administrativos e revisão final também pendentes.
-- A programação restante precisa ser reconciliada; projeção de término em 21/11 se houver um par por dia de 12 a 21/11, sem falhas/ausências. Envio pretendido pelo autor em 24/11.
+- Calendário reconciliado: pares restantes em 12–21/11, um por dia, sem reposição automática após eventual falha. Envio pretendido pelo autor em 24/11.
 
 Esta branch é um pacote de leitura, não a publicação integral do acervo experimental. Os capítulos descrevem emendas e limitações; não há inferência parcial nem declaração de aprovação do orientador. Os caminhos do apêndice referem-se ao acervo de trabalho, parte ainda local.
 
