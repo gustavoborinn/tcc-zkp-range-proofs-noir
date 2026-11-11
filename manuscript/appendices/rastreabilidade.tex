@@ -1,0 +1,28 @@
+\apendice{Rastreabilidade dos artefatos e dos resultados}
+\phantomsection
+\label{ap:rastreabilidade}
+\begingroup
+\sloppy
+
+Os caminhos deste apêndice são relativos à raiz do repositório de trabalho. Eles identificam os materiais usados na elaboração das tabelas e na verificação dos resultados. A organização descrita não implica que o conjunto completo esteja publicado ou depositado em um serviço externo. Os registros de execução devem ser distinguidos dos arquivos produzidos para apresentação no manuscrito.
+
+\textbf{Validação funcional e identificação das variantes.}
+O diretório \path{results/spec008/final-correctness/} reúne o manifesto, fontes dos circuitos, provas canônicas, entradas públicas e chaves de verificação por variante. Os arquivos \path{manifest.json}, \path{foundry-tests.json} e \path{final-review.json}, nesse diretório, documentam a validação arquivada. O vetor do compromisso está em \path{commitment-vector.json}. A conferência das contagens utilizadas no texto está em \path{manuscript/validation/functional-evidence.json}. Esses registros permitem localizar os casos executados; sua consulta não constitui uma nova execução dos testes.
+
+\textbf{Métricas estruturais.}
+O arquivo \path{results/final-readiness-20261024/coverage.csv} fornece as métricas confrontadas com o manifesto de validação. O gerador \path{manuscript/scripts/build_structural_tables.py} produz as tabelas estruturais e registra a proveniência dos arquivos utilizados. A identidade dos artefatos deve ser conferida antes de interpretar uma diferença entre valores regenerados e os apresentados no texto.
+
+\textbf{Verificação e implantação EVM.}
+A rodada usada nas tabelas de gas está em \path{results/final-gas-20261026-attempt05/}. O arquivo \path{fork-block.json} identifica o bloco do fork; \path{records.json} relaciona as provas e transações; \path{summary.json} contém os resumos por variante. Os recibos individuais, a calldata e os registros das implantações permanecem nesse conjunto. O inventário \path{artifact-hashes.json} registra os resumos criptográficos dos artefatos. As tentativas anteriores são preservadas como histórico dos incidentes e não integram as tabelas finais.
+
+O script \path{manuscript/scripts/build_gas_table.py} reconstrói os valores de verificação a partir dos recibos e da calldata. O script \path{manuscript/scripts/build_deployment_table.py} confere os vínculos entre verificadores e bibliotecas e produz a tabela de implantação. Ambos escrevem arquivos de apresentação e de proveniência no diretório do manuscrito; não enviam transações. Regenerar essas tabelas verifica a transformação dos dados retidos em valores apresentados, mas não repete a execução EVM nem constitui validação por uma implementação independente.
+
+\textbf{Protocolo e registros diários.}
+O calendário e o manifesto de arquivos congelados estão em \path{specs/016-final-analysis/schedule.json} e \path{specs/016-final-analysis/frozen-manifest.json}. Os registros da coleta final são organizados por data dentro de \path{results/final-daily-20261025/} e \path{results/final-daily-20261103/}. O sufixo dessa raiz é um identificador histórico: a data efetiva deve ser consultada no subdiretório e nos registros da execução. O estado consolidado está em \path{docs/daily-collection-status.md}; o procedimento operacional está em \path{docs/daily-collection-runbook.md}. Os pilotos são conjuntos distintos e não completam dias ausentes da amostra final.
+
+A análise prevista está implementada em \path{analysis/final_daily.py}. Sua presença no repositório não demonstra que a coleta esteja completa ou que a análise primária seja elegível. A interpretação depende das condições de completude e validade descritas no método, preservando falhas e indisponibilidades.
+
+\textbf{Fontes bibliográficas e apresentação.}
+O arquivo \path{manuscript/sources/verification.md} registra o alcance das consultas bibliográficas; os inventários associados identificam os documentos arquivados. O mapa \path{manuscript/evidence-map.md} relaciona seções e evidências. O script \path{manuscript/build.sh} compila a monografia a partir dos arquivos LaTeX e das tabelas existentes. Compilar o documento não executa os coletores nem atualiza automaticamente os resultados. O diário \path{docs/research-log.md} preserva as decisões e correções necessárias para interpretar o histórico.
+
+\par\endgroup

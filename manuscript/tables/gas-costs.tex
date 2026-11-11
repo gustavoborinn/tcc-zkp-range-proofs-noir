@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\caption{Gas de verificação das oito variantes no fork local de Sepolia}
+\label{tab:gas}
+\small
+\begin{tabular}{lrrrr}
+\hline
+ & \multicolumn{3}{c}{Gas total} & Execução \\
+Variante & Mínimo & Mediana & Máximo & líquida \\
+\hline
+Field diagnóstico & 1\,935\,842 & 1\,935\,926 & 1\,935\,926 & 1\,838\,390 \\
+u8 & 2\,003\,208 & 2\,003\,292 & 2\,003\,400 & 1\,899\,684 \\
+u32 & 2\,340\,880 & 2\,340\,904 & 2\,341\,012 & 2\,206\,708 \\
+u64 & 2\,340\,796 & 2\,340\,892 & 2\,340\,964 & 2\,206\,708 \\
+Field restrito 8 & 2\,003\,196 & 2\,003\,292 & 2\,003\,352 & 1\,899\,684 \\
+Field restrito 32 & 2\,340\,832 & 2\,340\,892 & 2\,340\,952 & 2\,206\,708 \\
+Field restrito 64 & 2\,340\,904 & 2\,340\,916 & 2\,340\,964 & 2\,206\,708 \\
+u64 com compromisso & 2\,479\,655 & 2\,479\,739 & 2\,479\,811 & 2\,332\,639 \\
+\hline
+\end{tabular}
+\par\smallskip
+\begin{minipage}{\textwidth}
+\renewcommand{\baselinestretch}{1}\small
+Fonte: elaboração própria a partir dos recibos da coleta de 26/10/2026.\par
+Nota: valores em unidades de gas. Resumo de cinco provas por variante; duas transações por prova, com custos idênticos entre repetições. A execução líquida foi constante nas cinco provas. Fork no bloco 11.999.881, Anvil 1.1.0 com Prague; solc 0.8.28, alvo Cancun e parâmetro optimizer\_runs=1. Field diagnóstico possui relação distinta das variantes de intervalo.
+\end{minipage}
+\end{table}

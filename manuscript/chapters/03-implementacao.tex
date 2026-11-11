@@ -1,0 +1,51 @@
+\chapter{Implementação}
+\label{cap:implementacao}
+
+A implementação reúne oito circuitos para examinar custos de representação numérica, ambiente de execução e vinculação de um valor a um compromisso. Cada circuito produz uma relação verificável com entradas públicas e privadas explicitadas. A finalidade dessa organização é permitir comparações delimitadas: variantes que verificam relações distintas não são tratadas como soluções semanticamente equivalentes.
+
+\section{Relações e entradas das oito variantes}
+
+Nas variantes de intervalo, o valor $v$ é privado e os limites $a$ e $b$ são públicos. Para $N\in\{8,32,64\}$, a relação de interesse é
+\begin{equation}
+  0\leq a\leq v\leq b<2^N.
+  \label{eq:intervalo}
+\end{equation}
+As três variantes com tipos inteiros sem sinal, denominadas \texttt{u8}, \texttt{u32} e \texttt{u64}, utilizam o tipo correspondente e verificam as duas comparações entre o valor e os limites. Os extremos do intervalo são admitidos.
+
+Outras três variantes representam os valores como elementos de corpo e impõem restrições explícitas de tamanho em bits. Elas são denominadas Field com restrições de 8, 32 e 64 bits. Cada uma limita $v$, $a$, $b$, $v-a$ e $b-v$ a $N$ bits. Restringir apenas as entradas não seria suficiente para justificar as duas desigualdades a partir das diferenças calculadas no corpo.
+
+Seja $p$ o módulo do corpo e $M=2^N-1$. Depois de restringir as entradas ao intervalo $[0,M]$, cada diferença inteira pertence a $[-M,M]$. Uma diferença negativa, representada módulo $p$, pertence a $[p-M,p-1]$. Para as larguras utilizadas, $p>2M$, de modo que esse conjunto não intersecta $[0,M]$. Portanto, exigir que as diferenças também caibam em $N$ bits exclui esses representantes de diferenças negativas. Esse argumento explica a relação implementada; não constitui uma auditoria formal do compilador ou do sistema de provas.
+
+A sétima variante, denominada Field diagnóstico, verifica somente
+\begin{equation}
+  (v-a)(b-v)\neq 0
+\end{equation}
+no corpo. Essa condição exclui $v=a$ e $v=b$, mas admite valores fora do intervalo inteiro. Por isso, ela é mantida como carga aritmética de diagnóstico, e não como prova de pertencimento ao intervalo da Equação~\ref{eq:intervalo}. Sua presença não autoriza atribuir diferenças de custo exclusivamente à representação numérica.
+
+A oitava variante acrescenta um compromisso à relação de intervalo de 64 bits. O circuito recebe $v$ e um valor auxiliar $s$ como entradas privadas; os limites, um identificador $id$ e o compromisso $C$ são públicos. Além das desigualdades, verifica
+\begin{equation}
+  C=\operatorname{PedersenHash}(d,v,s,id),
+  \qquad d=\texttt{0x54434301}.
+  \label{eq:compromisso}
+\end{equation}
+A ordem dos quatro elementos é fixa e o mesmo $v$ participa da comparação de intervalo e do cálculo do compromisso. O identificador é um elemento de corpo; uma aplicação que utilize identificadores textuais necessitaria definir sua codificação.
+
+O circuito comprova consistência com o compromisso fornecido. Ele não autentica a entidade emissora nem estabelece a veracidade de um atributo no mundo real. O valor auxiliar divulgado nos vetores de teste serve à reprodução e não oferece segredo em uma aplicação. A segurança de um uso real requer análise própria, incluindo geração e manutenção desse segredo, tratamento de identificadores e possibilidade de reutilização das provas.
+
+\section{Arquitetura e geração das provas}
+
+O fluxo de implementação separa compilação do circuito, preparação da testemunha, geração da prova e verificação. A versão utilizada do compilador Noir é \texttt{1.0.0-beta.20}; Barretenberg e sua interface JavaScript utilizam \texttt{5.0.0-nightly.20260324}. Os artefatos avaliados usam o alvo de verificação EVM, preservando a configuração necessária aos verificadores Solidity empregados no estudo.
+
+As entradas canônicas dos ensaios são $v=50$, $a=10$ e $b=100$. Na variante com compromisso, o identificador canônico é $7$, com valor auxiliar e compromisso registrados no conjunto de validação. Esses valores fixos tornam as entradas reproduzíveis, mas não representam uma amostra de atributos de uma aplicação.
+
+No ambiente nativo, cada tentativa invoca o processo de geração com circuito, testemunha e chave de verificação previamente preparados. No browser, a implementação utiliza explicitamente o backend \texttt{WasmWorker}, com entradas carregadas e descomprimidas antes da região cronometrada. A prova produzida é persistida e verificada contra a chave correspondente, incluindo a comparação das entradas públicas com os valores esperados.
+
+A proveniência retém fontes, artefatos compilados, testemunhas, chaves, configurações e resumos criptográficos dos arquivos. Essa identificação permite detectar divergências entre o material validado e o material usado na coleta. O registro de hashes comprova identidade dos bytes conferidos; a validade criptográfica é verificada por uma operação separada.
+
+\section{Testes positivos e negativos}
+
+A validação funcional precede a avaliação de desempenho. A suíte Noir compreende 71 funções de teste, incluindo valores internos, extremos, intervalos degenerados e rejeição de limites invertidos. As variantes Field com restrições também são exercitadas com valores fora do domínio e representantes associados ao retorno modular. Na variante com compromisso, os testes alteram valor, segredo auxiliar, identificador, compromisso, domínio e ordem dos elementos.
+
+O conjunto arquivado de validação externa registra 46 casos inválidos rejeitados e provas canônicas válidas para as oito variantes. A suíte Foundry registra 15 funções de teste, com verificações de aceitação, corrupção de prova, alteração de entradas públicas, quantidade incorreta de entradas e incompatibilidade de chaves. O número de funções não deve ser confundido com o número de combinações exercitadas, pois algumas funções percorrem vários verificadores e casos.
+
+Esses testes oferecem evidência de correção para os casos executados e proteção contra regressões conhecidas. Não constituem demonstração exaustiva de segurança criptográfica. A comparação do vetor de compromisso com a interface JavaScript verifica consistência entre interfaces da mesma família de backend, não concordância entre implementações criptográficas independentes.

@@ -1,0 +1,50 @@
+\chapter{Resultados}
+\label{cap:resultados}
+
+\section{Cobertura e correção funcional}
+
+O conjunto de validação arquivado registra a verificação local bem-sucedida das provas canônicas das oito variantes, com o alvo EVM. A suíte Noir registra 71 funções de teste aprovadas: oito para cada variante inteira, onze para cada variante Field com restrições, onze para a variante com compromisso e três para Field diagnóstico. Esses resultados correspondem aos casos de teste descritos na Seção~\ref{cap:implementacao}.
+
+Na validação externa de geração de testemunhas, os 46 casos inválidos exercitados foram rejeitados: três para cada variante inteira, dez para cada variante Field com restrições e sete para a variante com compromisso. Essas rejeições ocorrem na preparação da testemunha; não representam 46 provas inválidas submetidas a um verificador. O conjunto não inclui casos negativos externos para Field diagnóstico, cuja relação exclui os extremos mas não exige pertencimento ao intervalo inteiro.
+
+A suíte Foundry registra quinze funções de teste aprovadas, abrangendo aceitação das provas válidas e rejeição de alterações de provas ou entradas públicas, entre outras verificações descritas na implementação. Algumas funções percorrem múltiplos casos; por isso, esse total não é somado aos 46 casos de testemunha como se todos representassem a mesma unidade de validação. Os resultados Foundry também não substituem os recibos de transação necessários à comparação final de gas.
+
+Em conjunto, os registros sustentam a aceitação das entradas canônicas e a rejeição dos casos inválidos exercitados nas etapas correspondentes. O alcance dessa evidência é funcional e limitado à suíte executada: não demonstra ausência de toda sub-restrição possível nem segurança formal do backend. A análise de desempenho utiliza essas relações validadas, preservando a distinção entre Field diagnóstico e as variantes de intervalo.
+
+\section{Custos estruturais e verificação EVM}
+
+A Tabela~\ref{tab:circuitos} apresenta as contagens estruturais e os tamanhos das provas canônicas validadas. As três variantes inteiras possuem a mesma contagem ACIR, enquanto a contagem de gates difere. Nas variantes Field com restrições, a contagem ACIR também permanece constante entre larguras. Assim, a igualdade nessa contagem intermediária não implica igualdade de estrutura no backend.
+
+\input{tables/circuit-costs}
+
+As provas das variantes de 32 e 64 bits têm o mesmo tamanho no conjunto apresentado, tanto para inteiros quanto para Field com restrições. A variante com compromisso possui mais operações ACIR, mais gates e uma prova maior que a variante u64 sem compromisso. Essas observações descrevem os artefatos desta configuração; a comparação de latência depende da coleta correspondente.
+
+A Tabela~\ref{tab:verificadores} apresenta os tamanhos dos modelos compilados de runtime dos verificadores. Todos ficam abaixo de 24.576 bytes, com margens de 330 a 333 bytes. A margem é uma diferença aritmética em relação ao limite EIP-170. Na rodada de gas, os oito verificadores foram implantados e seus códigos conferidos, incluindo a vinculação das bibliotecas e os valores inseridos pelo construtor.
+
+\input{tables/verifier-sizes}
+
+A Tabela~\ref{tab:gas} apresenta o gas observado nas 40 provas selecionadas. As 40 chamadas de verificação retornaram verdadeiro e os 80 recibos registraram sucesso. Em cada prova, as duas transações tiveram gas total idêntico. O piso de calldata não vinculou em nenhuma dessas verificações, permitindo recuperar a execução líquida em todos os casos.
+
+\input{tables/gas-costs}
+
+
+
+Nas cinco provas de cada variante, a execução líquida permaneceu constante, enquanto o gas total variou com a composição da calldata. Os pares Field restrito 8/u8, Field restrito 32/u32 e Field restrito 64/u64 apresentaram os mesmos valores de execução líquida. As variantes de 32 e 64 bits também coincidiram nessa métrica. Essas igualdades descrevem as provas selecionadas e a implementação fixada; não decorrem de um teste de equivalência sobre uma população de provas.
+
+A variante u64 com compromisso apresentou maior custo de execução que u64 sem compromisso. Essa diferença abrange a verificação da relação adicional e de suas entradas públicas, não o custo isolado de uma operação de hash. Field diagnóstico apresentou o menor valor observado, mas verifica um predicado distinto e, portanto, não representa uma alternativa semanticamente equivalente de prova de intervalo.
+
+Os custos de implantação estão separados na Tabela~\ref{tab:implantacao}. Todos os 16 recibos registraram sucesso. A soma do verificador e de sua biblioteca variou de 6.670.986 a 6.671.659 gas entre as variantes. A rodada implantou uma biblioteca para cada verificador; os valores não pressupõem compartilhamento ou reaproveitamento de uma implantação anterior.
+
+\input{tables/deployment-costs}
+
+\section{Execução da coleta e incidentes}
+Até 11 de novembro de 2026, foram concluídos dez pares diários: de 26 de outubro a 1º de novembro e nos dias 3, 6 e 11 de novembro. Os vinte registros de sessão desses pares totalizam 18.400 provas verificadas, sendo 2.400 de aquecimento e 16.000 medidas, sem falhas de geração ou verificação registradas nessas sessões completas. Esse total descreve os pares retidos para a análise; tentativas interrompidas permanecem arquivadas separadamente. A análise final de latência depende dos dez pares restantes e da avaliação de elegibilidade e dos pressupostos.
+
+Em 29 de outubro, uma primeira tentativa completou apenas a sessão nativa e foi interrompida antes do WASM. Uma repetição integral foi autorizada antes de sua execução; o par completo dessa segunda tentativa foi retido, preservando o registro anterior sem combinar suas sessões. Em 3 de novembro, uma interpretação de reinício levou à reutilização das sementes do primeiro par. O autor esclareceu posteriormente a intenção de continuidade, e o par foi preservado com sua proveniência original. Essas emendas ocorreram durante a coleta e devem acompanhar a avaliação final, sem serem apresentadas como parte inalterada da alocação inicial.
+
+Não há pares coletados em 2, 4, 5 e de 7 a 10 de novembro. Em 6 de novembro, um lançamento foi encerrado durante a pausa inicial, antes de qualquer tentativa, e preservado; a coleta posteriormente autorizada nessa data foi concluída. Em 11 de novembro, o controle de espaço em disco bloqueou a execução antes das medições; após liberação de espaço e novo preflight, o par foi executado integralmente. Ausências e bloqueios anteriores a tentativas não são contados como falhas de prova.
+
+Na preparação da rodada de gas, duas tentativas foram interrompidas em consultas de rede. Outras duas chegaram às implantações, mas pararam na conferência do código: primeiro pela omissão de bibliotecas implantadas via CREATE2 no inventário e depois pelo tratamento incompleto dos valores imutáveis inseridos pelo construtor. Os controles foram corrigidos e os registros anteriores preservados. As 80 verificações analisadas pertencem à rodada concluída após essas correções, mantendo as provas selecionadas e o mesmo bloco e hash fixados antes das implantações. O diagnóstico separado do piso resultou em 61.000 gas, conforme esperado para o vetor descrito no método.
+
+\section{Latência e contrastes diários}
+\pendente{Inserir as estimativas dos 16 contrastes e seus intervalos após completar e validar a alocação de vinte pares. Esta versão não apresenta inferência parcial de latência.}

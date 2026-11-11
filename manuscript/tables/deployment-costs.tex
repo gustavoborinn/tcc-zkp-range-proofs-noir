@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+\centering
+\caption{Gas total de implantação dos verificadores e bibliotecas vinculadas}
+\label{tab:implantacao}
+\begin{tabular}{lrrr}
+\hline
+Variante & Verificador & Biblioteca & Soma \\
+\hline
+Field diagnóstico & 5\,294\,220 & 1\,376\,766 & 6\,670\,986 \\
+u8 & 5\,294\,893 & 1\,376\,766 & 6\,671\,659 \\
+u32 & 5\,294\,536 & 1\,376\,766 & 6\,671\,302 \\
+u64 & 5\,294\,632 & 1\,376\,766 & 6\,671\,398 \\
+Field restrito 8 & 5\,294\,629 & 1\,376\,766 & 6\,671\,395 \\
+Field restrito 32 & 5\,294\,260 & 1\,376\,754 & 6\,671\,014 \\
+Field restrito 64 & 5\,294\,608 & 1\,376\,766 & 6\,671\,374 \\
+u64 com compromisso & 5\,294\,608 & 1\,376\,766 & 6\,671\,374 \\
+\hline
+\end{tabular}
+\par\smallskip
+\begin{minipage}{\textwidth}
+\renewcommand{\baselinestretch}{1}\small
+Fonte: elaboração própria a partir dos recibos da rodada de 26/10/2026.\par
+Nota: valores em unidades de gas; uma transação por verificador (CREATE) e por biblioteca (CREATE2). Soma dos dois recibos associados à variante, sem amortização ou custo de infraestrutura previamente disponível no fork. Mesma configuração da Tabela~\ref{tab:gas}.
+\end{minipage}
+\end{table}

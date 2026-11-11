@@ -1,0 +1,68 @@
+\chapter{Método experimental}
+\label{cap:metodo}
+
+Esta seção descreve o protocolo de coleta e análise. Em 11 de novembro de 2026, a rodada de gas das oito variantes e dez dos 20 pares diários estavam concluídos. A meta de vinte pares foi mantida; os dez restantes e a análise final de latência permanecem pendentes. Os resultados executados são apresentados na Seção~\ref{cap:resultados}.
+
+\section{Desenho, ambiente e unidade experimental}
+
+O estudo avalia as oito relações da Seção~\ref{cap:implementacao} em uma única configuração de hardware e software. O ambiente congelado registra Linux com kernel 6.17.0-40-generic, 12 processadores lógicos disponíveis na afinidade e política de frequência identificada como \texttt{powersave}. Esses registros não implicam frequência constante. O browser é Chrome 150.0.7871.186, com V8 15.0.245.21; o backend WASM informou 12 threads na verificação de prontidão. O tamanho do conjunto de trabalhadores nativos não foi observado pelo coletor.
+
+Os metadados de prontidão identificam o processador Intel Core i5-13420H e registram \texttt{MemTotal} de 24.304.624 KiB, aproximadamente 23,18 GiB, disponibilizados ao sistema operacional. Esse registro é distinto da memória livre ou disponível durante cada sessão e não é uma medição de consumo do provador.
+
+A unidade de replicação da análise primária é o par diário, formado por uma sessão nativa e uma sessão WASM. Os ciclos de uma mesma sessão não são contados como replicações independentes. A inferência pressupõe uma aproximação de independência e identidade de distribuição dos resumos diários; espaçar as sessões entre dias não demonstra essa propriedade. O alcance pretendido restringe-se ao protocolo e à máquina estudada, sem amostragem de outros equipamentos ou usuários.
+
+As regiões cronometradas refletem modos operacionais distintos. No nativo, mede-se a execução de um novo subprocesso de geração, incluindo carregamento de arquivos. No browser, mede-se a chamada de geração no runtime residente, com dados previamente carregados e chave de verificação preparada. Conversão dos resultados, comunicação com o controlador, persistência e verificação ficam fora dessa região. Assim, a comparação não isola apenas o motor de execução.
+
+\section{Coleta diária e tratamento de falhas}
+
+O desenho prevê 20 dias distintos, com um par por dia. A alocação inicial distribuiu dez pares com início nativo e dez com início WASM, em ordem sorteada. O calendário passou por emendas logísticas, preservando as datas reais, as ordens e as sementes efetivamente executadas. Em 11 de novembro, havia dez pares completos; a programação dos dez restantes ainda precisava ser reconciliada com as ausências, sem reduzir a amostra planejada. Cada sessão contém 15 blocos de aquecimento e 100 blocos medidos, com oito variantes por bloco em ordem aleatória definida por uma semente registrada. O total planejado para os vinte pares completos é de 40 sessões e 36.800 tentativas: 4.800 de aquecimento e 32.000 medidas.
+
+Antes de cada sessão haverá pausa de 120 segundos. O orçamento de início de sessões do par é de 20 minutos: ultrapassado esse período, a sessão seguinte não será iniciada. Uma tentativa ativa continua sujeita ao mecanismo de timeout. O limite nominal por tentativa é de 180 segundos, aplicado ao subprocesso nativo ou ao watchdog do controlador do browser; neste último, o prazo também abrange a comunicação de início e retorno e não equivale à região de latência medida.
+
+A primeira falha de geração, verificação ou interrupção encerra o par, preservando os registros. Não haverá reposição automática, repetição para obter um resultado completo ou substituição de latência por um limite de timeout. Os relatórios distinguirão tentativas planejadas, iniciadas, bem-sucedidas, falhas retornadas, interrompidas e não iniciadas. Dias posteriores continuam sujeitos ao calendário e aos controles de prontidão. O protocolo suspende a inferência de latência de uma condição se mais de 15\% das tentativas iniciadas falharem; a exigência de 20 pares completos já impede a análise primária quando o encerramento por falha deixa um par incompleto.
+
+O coletor confere versões e hashes antes de executar, impede concorrência entre pares e recusa sobrescrever o diretório do dia. As condições de máquina são registradas nos extremos das sessões. A visibilidade e o foco da página são observados antes e depois de cada chamada cronometrada. Não há observação contínua de carga ou temperatura durante a medição. A ausência de dados de energia ou de algum sensor será registrada como indisponibilidade, sem pressupor alimentação ou estabilidade.
+
+Os pilotos permanecem separados da amostra final. O relato do autor sobre uso concorrente do computador em sessões anteriores não é uma medição de carga nem demonstra a causa de diferenças observadas. Os valores de aquecimento e repetição foram mantidos como escolhas operacionais, sem afirmar convergência do aquecimento apenas pela ausência de um sinalizador de deriva.
+
+\section{Métricas estruturais e gas}
+
+As métricas estruturais distinguem contagem de operações ACIR, contagem de gates do backend, tamanho da prova e tamanho do bytecode. Essas medidas descrevem camadas distintas e não são substitutas diretas de latência.
+
+A rodada de gas utilizou as oito variantes em um único fork local de Sepolia, fixado no bloco 11.999.881, com o hash conferido antes das transações. Foram selecionadas cinco provas por variante nas posições absolutas 15, 40, 65, 90 e 114 da sessão nativa do primeiro par do piloto, conforme alocação anterior à rodada. Cada prova foi novamente verificada com a chave arquivada e o alvo EVM. Após implantar os verificadores e suas bibliotecas, confirmou-se o retorno verdadeiro de cada chamada de verificação e executaram-se duas transações por prova. As 80 transações permitem comparar repetições das mesmas entradas; não são tratadas como unidades independentes de uma população de provas.
+
+O Anvil 1.1.0 executou o hardfork Prague. A compilação preservou solc 0.8.28, alvo Cancun e parâmetro \texttt{optimizer\_runs=1}, distinguindo a configuração do compilador das regras do ambiente de execução. O código implantado foi comparado aos artefatos compilados, incluindo endereços de bibliotecas vinculadas e constantes inseridas pelo construtor. O endpoint remoto forneceu apenas consultas para o fork; todas as transações foram enviadas ao processo local. Foram preservados o cabeçalho do bloco, as versões, as fontes, o código implantado, as chamadas, a calldata e os recibos.
+
+A decomposição segue a regra da EIP-7623 \cite{eip7623}. Para $z$ bytes nulos e $n$ bytes não nulos na calldata, define-se $t=z+4n$. O componente padrão custa $4t$ e o piso da transação é $21\,000+10t$. Quando o gas total observado excede esse piso, a execução líquida é obtida subtraindo $21\,000+4t$ do total; quando o piso vincula, o recibo não determina univocamente a execução. Um diagnóstico separado, com 1.000 bytes não nulos enviados a um endereço sem código, verificou o comportamento do piso para esse vetor. Essa verificação é mais restrita que uma auditoria completa do hardfork.
+
+O resumo por variante apresenta mínimo, mediana e máximo entre as cinco provas selecionadas, usando a primeira transação de cada par e conferindo a diferença para a segunda. A seleção por posição não constitui amostra probabilística de todas as provas possíveis. A projeção de armazenamento em blobs, quando apresentada, permanece uma hipótese de empacotamento, sem conversão automática em economia monetária.
+
+O custo de implantação é apresentado pelo gas total dos recibos das oito transações CREATE dos verificadores e das oito transações que implantaram as bibliotecas via CREATE2. Cada verificador é associado à biblioteca efetivamente vinculada por fonte e endereço. A soma desses dois recibos representa a implantação do par observado, sem incluir infraestrutura anteriormente disponível no fork. Há uma observação por implantação, sem estimativa de variabilidade ou amortização. A decomposição usada para as chamadas de verificação não é aplicada às implantações.
+
+\section{Análise estatística e justificativa da revisão}
+
+Seja $T_{e,d,b,c}$ a latência medida no ambiente $e$, dia $d$, bloco $b$ e condição $c$. Define-se $M_{e,d,c}$ como a mediana das 100 latências medidas da condição naquela sessão. A família primária contém 16 contrastes logarítmicos diários:
+\begin{align}
+ D^{A}_{d,c} &= \log\left(\frac{M_{\mathrm{WASM},d,c}}{M_{\mathrm{nativo},d,c}}\right), \\
+ D^{B}_{d,e,N} &= \operatorname{mediana}_{b}\log\left(\frac{T_{e,d,b,\mathrm{u}N}}{T_{e,d,b,\mathrm{Field}_{N}}}\right), \\
+ D^{C}_{d,e} &= \operatorname{mediana}_{b}\log\left(\frac{T_{e,d,b,\mathrm{compromisso}}}{T_{e,d,b,\mathrm{u64}}}\right).
+\end{align}
+O grupo A contém oito comparações de ambiente; B contém três larguras em cada ambiente; C contém uma comparação com compromisso por ambiente. Valores positivos representam maior latência no numerador. O custo do compromisso inclui toda a relação adicional e suas entradas públicas, não apenas o cálculo de hash isolado.
+
+Para cada contraste $j$, o alvo é $\exp(\operatorname{mediana}(D_j))$ na distribuição modelada dos pares diários. A estimativa será a exponencial da mediana amostral dos logaritmos. Com 20 observações, isso equivale ao ponto médio geométrico dos dois valores centrais na escala de razões, e não à média geométrica de todos os dias.
+
+Será testada a hipótese de mediana populacional nula para cada contraste, com alternativa bilateral, usando o teste de quantil da SciPy 1.18.0. O procedimento considera contagens estritamente abaixo e abaixo ou iguais ao valor hipotético para tratar empates; sua validade depende de observações independentes e identicamente distribuídas \cite{scipyquantile}. O protocolo aplica Holm à família fixa de 16 testes, com nível de 5\%. Serão apresentados intervalos pontuais de 95\% e intervalos simultâneos conservadores com confiança individual de $1-0{,}05/16$, exponenciados para a escala de razões. Os intervalos simultâneos e os testes ajustados por Holm são procedimentos diferentes.
+
+Para 20 observações contínuas independentes e identicamente distribuídas, os intervalos previstos usam as estatísticas de ordem 6 e 15 no caso pontual, e 4 e 17 no simultâneo. A análise não produzirá decisões para a família caso falte algum dos 20 pares elegíveis, exista contraste indefinido ou um contraste tenha todos os valores diários idênticos. A última condição é uma regra conservadora do estudo, não uma limitação universal do teste.
+
+O teste Brunner--Munzel trabalha com duas amostras independentes \cite{scipybm}. A abordagem inicialmente prevista no projeto foi revista porque a independência dos ciclos de uma sessão não está estabelecida e as análises anteriores apresentaram casos degenerados e limitações dos intervalos candidatos. A revisão muda também o parâmetro de interesse: o contraste diário não é a probabilidade relativa entre ciclos do desenho inicial. O teste de quantil não elimina, por si só, eventual dependência temporal entre dias.
+
+A escolha de 20 pares é limitada por recursos. No cálculo de planejamento, assumindo distribuição contínua, independência e probabilidade de contraste positivo de 0,9, a regra conservadora baseada no menor limiar de Holm resultou em potência aproximada de 86,7\%; com probabilidade de 0,8, a potência cai para 41,1\%. São alternativas hipotéticas, não estimativas obtidas do piloto nem garantias de detecção de diferenças pequenas. A razão 1,20 é uma referência prática para o alvo revisado, sem teste de equivalência. A precisão desejada corresponde a uma razão entre limites superior e inferior do intervalo simultâneo de até 1,10; não haverá extensão da coleta para alcançar essa largura ou significância.
+
+A localização dos artefatos, dos geradores das tabelas e dos registros de validação é apresentada no Apêndice~\ref{ap:rastreabilidade}. Esse roteiro distingue a conferência de resultados retidos da execução de novos experimentos.
+
+\section{Limitações do desenho}
+
+O uso de uma máquina, entradas canônicas fixas e um calendário de conveniência limita a generalização. Políticas de frequência, condições térmicas e processos concorrentes podem variar sem serem inteiramente capturados pelas observações de extremidade. A inspeção da evolução diária pode revelar padrões incompatíveis com a análise proposta, mas sua ausência não prova independência.
+
+A interpretação final dependerá da completude da coleta e da adequação das premissas. Se a inferência não for sustentada, os resultados descritivos serão mantidos com sua limitação, sem interpretar indisponibilidade ou ausência de significância como igualdade entre variantes. O registro de incidentes e a preservação de resultados desfavoráveis integram o método, em vez de constituírem critérios para excluir observações.

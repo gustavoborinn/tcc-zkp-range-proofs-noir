@@ -1,0 +1,44 @@
+\chapter{Introdução}
+\label{cap:introducao}
+
+\section{Contexto e problema de pesquisa}
+
+Verificar uma condição sobre um valor não exige necessariamente conhecer esse valor. Uma aplicação pode precisar verificar se um atributo pertence a um intervalo, enquanto seu titular deseja preservar o atributo como informação privada. Provas de conhecimento zero oferecem uma formulação criptográfica para verificar afirmações sem revelar informação adicional sobre a testemunha, segundo as propriedades e o modelo do sistema utilizado \cite{zkproofref}. No caso de uma prova de intervalo, a condição de interesse é $a \leq v \leq b$, com limites públicos $a$ e $b$ e valor privado $v$.
+
+Para relacionar essa condição a um atributo previamente comprometido, o circuito precisa vincular o mesmo valor $v$ a um compromisso público. Esse vínculo integra o objeto deste trabalho: além das relações de intervalo, uma variante verifica a consistência entre o valor privado e o compromisso informado. O compromisso delimita o objeto sobre o qual se faz a prova, mas não estabelece, por si só, quem forneceu o atributo nem se ele corresponde a uma informação verdadeira sobre uma pessoa ou instituição.
+
+A implementação dessa relação envolve custos em etapas diferentes. O provador produz um artefato que será consumido pelo verificador; o programa de alto nível, sua representação intermediária e o sistema de provas participam dessa cadeia. A literatura de benchmarking de provas ressalta a necessidade de distinguir essas camadas e considerar múltiplas métricas \cite{zkbenchmark}. Assim, a contagem de operações do circuito, o tempo de geração, o tamanho da prova e o custo de verificação respondem a perguntas complementares.
+
+Este trabalho estuda a cadeia Noir/Barretenberg com UltraHonk. Compara a geração de provas por um processo nativo e por WebAssembly em navegador, além de diferentes representações numéricas e da adição do compromisso. A verificação utiliza contratos Solidity em um ambiente EVM local. A questão central é: quais custos computacionais e de verificação essa configuração apresenta para as relações implementadas, e como esses custos variam entre os modos de execução e as representações selecionadas?
+
+\section{Justificativa e perguntas de pesquisa}
+
+A avaliação conjunta dessas etapas é relevante para decisões de implementação. A escolha de executar o provador no navegador envolve um ambiente operacional distinto do processo nativo; já a verificação em contrato introduz custos de transação e restrições de tamanho do código. A EIP-170, por exemplo, estabelece um limite para o código implantado no regime em que se aplica \cite{eip170}. Portanto, a geração bem-sucedida de uma prova não basta para caracterizar todos os custos do fluxo.
+
+No eixo das representações, comparar tipos numéricos exige controlar o significado da relação. Uma variante sobre corpo finito que não verifica o intervalo não constitui uma alternativa semanticamente equivalente a um circuito que o verifica. O estudo separa esse caso diagnóstico das comparações entre inteiros e representações sobre corpo finito com restrições explícitas. Essa distinção permite interpretar diferenças de custo sem atribuí-las apenas ao nome do tipo utilizado.
+
+A questão central é desdobrada em três perguntas:
+
+\noindent P1: Como diferem as latências das oito variantes entre o processo nativo e o navegador, nas condições da máquina e do protocolo adotados?
+
+\noindent P2: Que diferenças de latência aparecem entre representações semanticamente comparáveis e com a inclusão da relação de compromisso?
+
+\noindent P3: Quais são os custos estruturais, os tamanhos dos artefatos e os custos de implantação e verificação EVM das oito variantes?
+
+Essas perguntas operacionalizam a avaliação de viabilidade do projeto em termos de métricas observáveis. A interpretação de adequação a uma aplicação específica dependeria ainda de seus requisitos de latência, recursos e custo, não definidos por este experimento.
+
+\section{Objetivos}
+
+O objetivo geral é desenvolver, implantar e avaliar circuitos de provas de intervalo em Noir/UltraHonk para validação privada de atributos comprometidos em contratos inteligentes compatíveis com Ethereum, dentro do recorte experimental definido.
+
+Os objetivos específicos são implementar as relações de intervalo e a variante vinculada a compromisso; verificar o comportamento dos circuitos com entradas válidas e inválidas; compilar os circuitos e gerar seus verificadores Solidity; comparar a latência de geração nos ambientes nativo e WebAssembly; comparar representações inteiras com variantes sobre corpo finito semanticamente controladas; e caracterizar operações ACIR, gates do backend, tamanhos de prova e de código, gas de implantação e de verificação e custos de calldata. A análise distingue o gas total do recibo de componentes cuja decomposição seja sustentada pelas regras efetivamente executadas.
+
+\section{Delimitação e organização do trabalho}
+
+O estudo abrange oito variantes: três circuitos inteiros, três circuitos sobre corpo finito com restrições explícitas correspondentes, um circuito diagnóstico sobre corpo finito e um circuito de intervalo com compromisso. As medições de latência utilizam uma máquina, versões fixadas e entradas canônicas. A comparação entre ambientes considera seus escopos operacionais de medição, que diferem no carregamento e na permanência do runtime. As diferenças observadas não isolam o efeito causal do motor de execução.
+
+A avaliação se concentra na implementação das relações e em seus custos. Não inclui uma infraestrutura de emissão de credenciais, autenticação de atributos ou uma aplicação completa de identidade ou finanças. A verificação EVM local não representa uma avaliação de congestionamento de rede ou de preços monetários. Os testes negativos fornecem evidência sobre os casos exercitados, sem substituir uma demonstração formal de segurança da cadeia criptográfica.
+
+A contribuição pretendida é uma avaliação rastreável dessa configuração, acompanhada da implementação, dos artefatos e de um procedimento de coleta e análise reproduzível. O método distingue pilotos de coleta final e explicita as condições para a inferência. Nesta versão, a caracterização estrutural e EVM de P3 está concluída no recorte adotado; as respostas de latência de P1 e P2 dependem do encerramento e da validação da coleta diária.
+
+A Seção~\ref{cap:fundamentacao} apresenta os conceitos e trabalhos relacionados. A Seção~\ref{cap:implementacao} descreve as relações e o fluxo implementado, e a Seção~\ref{cap:metodo} estabelece o método experimental. Os resultados são apresentados na Seção~\ref{cap:resultados}, seguida da discussão na Seção~\ref{cap:discussao} e da conclusão na Seção~\ref{cap:conclusao}.

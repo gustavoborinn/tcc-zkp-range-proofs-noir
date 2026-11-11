@@ -1,3 +1,13 @@
+# Rascunho atual para orientação — 11/11/2026
+
+[**Ler o TCC em PDF (40 páginas)**](manuscript/review/tcc-orientacao-2026-11-11.pdf)
+
+[Estado atual e pendências](docs/advisor-status-20261111.md) · [Fontes LaTeX e compilação](manuscript/README.md)
+
+Esta branch publica a versão atual do manuscrito para orientação. A coleta está em 10/20 pares; não é a versão final. O restante do código herdado da main e a documentação histórica abaixo ainda não refletem todo o acervo experimental local atual.
+
+---
+
 # Validation of Private Attributes in Smart Contracts via Zero-Knowledge Proofs
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

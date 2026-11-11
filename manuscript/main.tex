@@ -1,0 +1,63 @@
+% Compatibilidade: a classe testa pdfoutput antes de carregar os pacotes.
+% Tectonic gera PDF via motor XeTeX; este indicador evita apenas o bloqueio legado.
+\ifdefined\pdfoutput\else\newcount\pdfoutput\pdfoutput=1\fi
+\documentclass[fleqn]{unifal}
+\usepackage[brazil]{babel}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Courier New}
+\usepackage{ragged2e}
+\usepackage{amsmath}
+\usepackage{hyperref}
+% A classe usa MakeUppercase em títulos enviados aos marcadores PDF.
+\pdfstringdefDisableCommands{\def\MakeUppercase#1{#1}}
+% Manual UNIFAL 2025, seção 7.4.2: chamada numérica entre parênteses.
+\makeatletter
+\renewcommand{\@cite}[2]{(#1\if@tempswa , #2\fi)}
+\renewcommand{\@biblabel}[1]{#1}
+% Lista opcional: designação, número, travessão, título e página (manual §3.2.1.11).
+\renewcommand{\listoftables}{%
+  \clearpage\thispagestyle{empty}%
+  \begin{center}\textbf{LISTA DE TABELAS}\end{center}%
+  \begingroup
+  \renewcommand{\l@table}{\@dottedtocline{1}{0em}{5.7em}}%
+  \renewcommand{\numberline}[1]{\hb@xt@\@tempdima{Tabela~##1\hfil}}%
+  \@starttoc{lot}%
+  \endgroup\clearpage
+}
+\makeatother
+\hypersetup{hidelinks,pdfauthor={Gustavo Borin Nascimento},pdftitle={Avaliação de range proofs em Noir/UltraHonk}}
+\setlength{\headheight}{15pt}
+\setlength{\footskip}{4.35004pt}
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{0pt}
+\newcommand{\pendente}[1]{\noindent\textbf{Pendente de redação:} #1\par}
+% O ambiente titlepage reinicia a contagem ao terminar. Preservar as
+% páginas da folha de rosto e ficha; a capa antecede o novo início em 1.
+\AddToHook{env/titlepage/end}{\xdef\paginaAposTitulo{\number\numexpr\value{page}+1\relax}}
+\AddToHook{env/titlepage/after}{\setcounter{page}{\paginaAposTitulo}}
+\input{metadata}
+% O modelo gera uma ficha automaticamente. Neste esqueleto ela é substituída
+% por uma indicação explícita, sem inventar dados de catalogação.
+\renewcommand{\geraFichaCatalografica}{\vspace*{\fill}\noindent Ficha catalográfica: pendente de emissão, quando aplicável.\vspace*{\fill}}
+\begin{document}
+\maketitle
+\palchaves{A definir após a redação do resumo.}
+\resumo{Rascunho para orientação, atualizado em 11 de novembro de 2026. A implementação, os resultados funcionais, estruturais e de gas estão documentados; dez dos vinte pares diários foram concluídos. A análise final de latência, a conclusão e este resumo permanecem pendentes. Este documento não é a versão de entrega.}
+\keywords{To be defined after the abstract is written.}
+\abstract{Draft for advisor review, updated on November 11, 2026. Ten of twenty daily pairs are complete. The final latency analysis, conclusions and abstract remain pending. This is not the submission version.}
+\listoftables
+\tableofcontents
+\pagestyle{unifal}
+\include{chapters/01-introducao}
+\include{chapters/02-fundamentacao}
+\include{chapters/03-implementacao}
+\include{chapters/04-metodo}
+\include{chapters/05-resultados}
+\include{chapters/06-discussao}
+\include{chapters/07-conclusao}
+\referencias
+\input{references}
+\input{appendices/rastreabilidade}
+\end{document}

@@ -1,0 +1,34 @@
+\chapter{Discussão}
+\label{cap:discussao}
+
+A discussão a seguir abrange os resultados funcionais, estruturais e de verificação EVM já concluídos. As perguntas P1 e P2 dependem dos contrastes de latência da coleta diária, ainda em andamento nesta versão. Os resultados dos pilotos não são utilizados para antecipar essas respostas.
+
+\section{Respostas às perguntas de pesquisa}
+
+Os resultados permitem responder a P3 no recorte da configuração adotada: as Tabelas~\ref{tab:circuitos} a~\ref{tab:implantacao} apresentam contagens estruturais, tamanhos dos artefatos e gas de verificação e implantação das oito variantes. A Tabela~\ref{tab:circuitos} mostra que o efeito da representação numérica depende da camada observada. As variantes inteiras têm a mesma contagem ACIR nas três larguras, mas diferem em gates e tamanho de prova. Portanto, a contagem intermediária, isoladamente, não ordena todos os custos considerados.
+
+A comparação semanticamente controlada entre Field restrito e inteiro torna essa distinção mais precisa. Em cada largura, a variante Field utiliza menos operações ACIR e dois gates a menos que a variante inteira. Contudo, os tamanhos de prova coincidem e, nas cinco provas selecionadas para gas, a execução líquida de verificação também coincide. A redução estrutural observada não se traduziu em redução dessa métrica EVM. Esse resultado não determina qual representação terá menor latência de geração, questão que permanece vinculada à análise diária de P2.
+
+A inclusão do compromisso amplia a relação provada e aumenta gates, tamanho da prova e gas de execução em comparação com u64 sem compromisso. Essa combinação evidencia um custo adicional nas camadas medidas, mas não permite atribuí-lo exclusivamente ao cálculo de Pedersen: o verificador processa a prova da relação ampliada e suas entradas públicas. O ganho funcional consiste em vincular o valor usado no intervalo ao compromisso informado. A autenticidade desse valor como atributo de uma pessoa ou instituição continua fora da relação implementada.
+
+A implantação local foi possível para os oito verificadores, com código conferido e margens de 330 a 333 bytes em relação ao limite EIP-170. Essas margens caracterizam a configuração compilada, não uma garantia de que versões futuras do gerador ou outras opções de compilação também caberão no limite. A implantação inicial do par verificador/biblioteca teve custos próximos entre as variantes, enquanto o gas de verificação apresentou diferenças mais amplas. Essa distinção separa um custo inicial do custo por uso. O estudo não estima amortização por número de verificações nem preço monetário de uma aplicação.
+
+\section{Comparação com trabalhos relacionados}
+
+A apresentação por camadas concretiza, no recorte deste experimento, a recomendação de considerar múltiplas métricas de sistemas de provas formulada por Benarroch et al.\ \cite{zkbenchmark}. A coincidência de tamanho de prova e gas de execução líquida nos pares Field restrito/inteiro, apesar de contagens estruturais diferentes, ilustra por que uma única métrica seria insuficiente para caracterizar a implementação. Não se estabelece uma regra geral de correspondência entre gates, bytes e custo do verificador a partir dessas oito relações.
+
+O relatório de Nadolinski para a Base também considera geração de provas e verificação EVM, mas utiliza uma relação de verificação de assinaturas ECDSA P-256 e outra configuração de execução \cite{basebenchmark}. A comparação pertinente está na separação dessas etapas de custo. Seus valores não constituem uma referência numérica diretamente comparável às provas de intervalo deste TCC, e a rodada local não produz um ranking entre os sistemas avaliados naquele relatório.
+
+A distinção entre predicado e aplicação completa também aparece no relatório de credenciais de Gasser, Humbert e Elghareeb, que separa a prova de idade dos mecanismos de vínculo ao titular e de assinatura do emissor \cite{eidreport}. Neste estudo, os testes funcionais e o compromisso sustentam o comportamento das relações implementadas, sem completar esses mecanismos. Assim, o custo da variante com compromisso deve ser interpretado como custo do protótipo descrito, não como custo total de uma solução de identidade eletrônica.
+
+\pendente{Após a análise final, discutir P1 e P2 em relação aos trabalhos browser/nativo, preservando as diferenças de circuito, hardware, versões e fronteiras temporais.}
+
+\section{Implicações e ameaças à validade}
+
+A decomposição do gas evita atribuir à execução do verificador toda diferença observada no recibo. Nesta rodada, o piso não vinculou e a execução líquida foi constante dentro de cada variante; as diferenças entre suas cinco provas vieram do componente de calldata. Reportar apenas o total ocultaria essa distinção. Se o piso determinasse o total, a mesma subtração não identificaria univocamente a execução, conforme a regra descrita no método.
+
+As duas transações de cada prova produziram o mesmo gas, mas repetem exatamente a mesma entrada. Elas verificam a repetibilidade daquele caso, sem ampliar o conjunto de provas coberto. As cinco posições foram fixadas antes da rodada e não escolhidas por desempenho; ainda assim, não são uma amostra probabilística do espaço de provas. As igualdades de execução observadas têm esse alcance, e nenhum teste de equivalência foi aplicado.
+
+A fixação das versões e a conferência do código implantado delimitam qual implementação foi avaliada. As interrupções na preparação do fork e na conferência de bibliotecas e valores imutáveis mostram a importância de distinguir artefato compilado, implantação e verificação efetiva. A preservação dessas tentativas permite identificar as correções anteriores à rodada completa; seus recibos não foram misturados aos 80 analisados.
+
+Por fim, os testes negativos exercitam casos específicos, enquanto as entradas canônicas e a única máquina restringem a variedade de uso avaliada. A viabilidade para uma aplicação depende de requisitos externos de latência, recursos, custo e autenticação que não foram definidos neste experimento. A avaliação de latência ainda deverá considerar a completude dos 20 pares, as diferentes regiões cronometradas e as premissas do método; nenhum resultado de gas resolve essas condições.
